@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splitwiser</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f2f5; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 1.2rem; margin-bottom: 15px; }
+        
+        /* Inputs & Buttons */
+        input, select { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; margin-top: 10px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.2s; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: wait; }
+        
+        /* Specific Styles */
+        .delete-btn { background: #ff4757; width: auto; padding: 6px 12px; font-size: 14px; }
+        .delete-btn:hover { background: #ff6b81; }
+        
+        .row { display: flex; gap: 10px; }
+        .list-item { border-bottom: 1px solid #f0f0f0; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .perspective-bar { background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .perspective-bar label { font-size: 0.9rem; opacity: 0.8; }
+        
+        .status-msg { text-align: center; font-size: 0.9rem; margin-bottom: 10px; height: 20px; color: #666; }
+        
+        /* Debt Colors */
+        .owes-you { color: #27ae60; font-weight: bold; }
+        .you-owe { color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="perspective-bar">
+        <label>👀 WHOSE PHONE IS THIS?</label>
+        <select id="currentUserSelect" onchange="renderDashboard()">
+            <option value="">-- Loading Users... --</option>
+        </select>
+    </div>
+
+    <div id="statusMsg" class="status-msg">Loading data...</div>
+
+    <div class="card">
+        <h2>👥 Add Person</h2>
+        <div class="row">
+            <input type="text" id="newUserName" placeholder="Name (e.g. Dad)">
+            <button onclick="addUser()" id="addBtn">Add</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>💸 Add Expense</h2>
+        <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
+        <input type="number" id="amount" placeholder="Amount (e.g. 500)">
+        <div class="row">
+            <select id="payerSelect"><option>Who Paid?</option></select>
+            <select id="beneficiarySelect"><option>For Whom?</option></select>
+        </div>
+        <button onclick="addExpense()" id="expBtn">Add Expense</button>
+    </div>
+
+    <div class="card">
+        <h2 id="dashboardTitle">📊 Dashboard</h2>
+        <div id="statusList"></div>
+    </div>
+
+    <div class="card">
+        <h2>📜 History</h2>
+        <div id="expenseList"></div>
+    </div>
+
+    <script>
+        // *** YOUR SPECIFIC LINK IS HERE ***
+        const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec"; 
+        
+        let users = [];
+        let expenses = [];
+
+        // --- CLOUD SYNC ---
+
+        async function loadFromCloud() {
+            showStatus("⏳ Syncing...");
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Safety check if data is new/empty
+                users = data.users || [];
+                expenses = data.expenses || [];
+                
+                renderAll();
+                showStatus("✅ Up to date");
+            } catch (error) {
+                console.error(error);
+                showStatus("❌ Connection Failed. Try refreshing.");
+            }
+        }
+
+        async function saveToCloud() {
+            showStatus("💾 Saving...");
+            const payload = JSON.stringify({ users, expenses });
+            
+            // We send data blindly to avoid CORS errors
+            await fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: payload
+            });
+
+            // Wait 1.5 seconds then reload to confirm save
+            setTimeout(loadFromCloud, 1500);
+        }
+
+        function showStatus(msg) {
+            document.getElementById('statusMsg').innerText = msg;
+        }
+
+        // --- APP LOGIC ---
+
+        function addUser() {
+            const name = document.getElementById('newUserName').value.trim();
+            if (name && !users.includes(name)) {
+                users.push(name);
+                document.getElementById('newUserName').value = '';
+                saveToCloud();
+            }
+        }
+
+        function addExpense() {
+            const desc = document.getElementById('desc').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const payer = document.getElementById('payerSelect').value;
+            const beneficiary = document.getElementById('beneficiarySelect').value;
+
+            if (desc && amount && payer !== 'Who Paid?' && beneficiary !== 'For Whom?' && payer !== beneficiary) {
+                expenses.push({ id: Date.now(), desc, amount, payer, beneficiary });
+                document.getElementById('desc').value = '';
+                document.getElementById('amount').value = '';
+                saveToCloud();
+            } else {
+                alert("Please fill all fields. Note: Payer and Receiver cannot be the same.");
+            }
+        }
+
+        function deleteExpense(id) {
+            if(confirm("Delete this expense?")) {
+                expenses = expenses.filter(e => e.id !== id);
+                saveToCloud();
+            }
+        }
+
+        // --- RENDERING (MAKING IT LOOK GOOD) ---
+
+        function renderAll() {
+            updateDropdowns();
+            renderDashboard();
+            renderHistory();
+        }
+
+        function updateDropdowns() {
+            const currentVal = document.getElementById('currentUserSelect').value;
+            
+            // Helper to make option tags
+            const makeOptions = (selected) => users.map(u => `<option value="${u}" ${u === selected ? 'selected' : ''}>${u}</option>`).join('');
+            
+            // Update the Top "Perspective" Bar
+            const userSelect = document.getElementById('currentUserSelect');
+            if (users.length === 0) {
+                userSelect.innerHTML = `<option value="">-- Add a person first --</option>`;
+            } else {
+                userSelect.innerHTML = `<option value="">-- Select Your Name --</option>` + makeOptions(currentVal);
+            }
+
+            // Update Expense Dropdowns
+            document.getElementById('payerSelect').innerHTML = `<option>Who Paid?</option>` + makeOptions("");
+            document.getElementById('beneficiarySelect').innerHTML = `<option>For Whom?</option>` + makeOptions("");
+        }
+
+        function renderDashboard() {
+            const me = document.getElementById('currentUserSelect').value;
+            const list = document.getElementById('statusList');
+            const title = document.getElementById('dashboardTitle');
+            
+            list.innerHTML = '';
+            
+            if (!me) {
+                title.innerText = "📊 Dashboard";
+                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">Select "Whose Phone Is This?" at the top to see who owes you money.</div>';
+                return;
+            }
+
+            title.innerText = `📊 Summary for ${me}`;
+            
+            let balances = {};
+            users.forEach(u => balances[u] = 0);
+
+            expenses.forEach(e => {
+                if (e.payer === me) {
+                    balances[e.beneficiary] += e.amount; // They owe me
+                } else if (e.beneficiary === me) {
+                    balances[e.payer] -= e.amount; // I owe them
+                }
+            });
+
+            let html = '';
+            for (let person in balances) {
+                if (person === me) continue;
+                const amt = balances[person];
+                if (amt > 0) {
+                    html += `<div class="list-item"><span class="owes-you">${person} owes you</span> <span class="owes-you">$${amt.toFixed(2)}</span></div>`;
+                } else if (amt < 0) {
+                    html += `<div class="list-item"><span class="you-owe">You owe ${person}</span> <span class="you-owe">$${Math.abs(amt).toFixed(2)}</span></div>`;
+                }
+            }
+            
+            if (html === '') html = '<div style="text-align:center; color:#777; padding:10px;">You are all settled up! 🎉</div>';
+            list.innerHTML = html;
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('expenseList');
+            if (expenses.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">No expenses yet.</div>';
+                return;
+            }
+            list.innerHTML = expenses.map(e => `
+                <div class="list-item">
+                    <div>
+                        <strong>${e.desc}</strong>
+                        <div style="font-size:0.85em; color:#666;">
+                            ${e.payer} paid $${e.amount} for ${e.beneficiary}
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteExpense(${e.id})">Del</button>
+                </div>
+            `).reverse().join('');
+        }
+
+        // START THE APP
+        loadFromCloud();
+    </script>
+</body>
+</html>
