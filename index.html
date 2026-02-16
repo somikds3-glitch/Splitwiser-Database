@@ -4,156 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Splitwiser Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* BASE STYLES */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 15px; background: #f4f7f6; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee; }
-        h2 { margin-top: 0; font-size: 1.1rem; margin-bottom: 15px; color: #2c3e50; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* INPUTS */
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e1e1e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
-        input:focus, select:focus { outline: none; border-color: #007bff; background: white; }
-        
-        /* CHECKBOX LIST */
-        .user-checkbox-list { max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; margin-bottom: 15px; }
-        .user-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f9f9f9; }
-        .user-row:last-child { border-bottom: none; }
-        .user-row label { flex-grow: 1; margin-left: 10px; font-weight: 500; }
-        .amount-input { width: 80px; padding: 6px; margin: 0; display: none; border: 1px solid #ddd; border-radius: 4px; }
-        
-        /* BUTTONS */
-        button { width: 100%; padding: 14px; margin-top: 10px; background: #007bff; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 16px; transition: transform 0.1s; }
-        button:active { transform: scale(0.98); }
-        .delete-btn { background: #ff4757; width: auto; padding: 5px 10px; font-size: 12px; border-radius: 6px; margin-left: 10px;}
-        
-        /* TABS for Split Type */
-        .split-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .split-tab { flex: 1; padding: 10px; text-align: center; background: #eee; border-radius: 8px; cursor: pointer; font-size: 0.9em; font-weight: 500; }
-        .split-tab.active { background: #007bff; color: white; }
+        /* --- MODERN VARIABLES --- */
+        :root {
+            --primary: #4F46E5; /* Indigo */
+            --primary-dark: #4338ca;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-light: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+            --border: #E5E7EB;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
 
-        /* UTILS */
-        .status-msg { text-align: center; font-size: 0.85rem; margin-bottom: 15px; height: 20px; color: #888; font-weight: 500; }
-        .owes-you { color: #27ae60; font-weight: 700; }
-        .you-owe { color: #c0392b; font-weight: 700; }
-        .list-item { border-bottom: 1px solid #f0f0f0; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for scrolling */
+        }
+
+        /* --- APP HEADER --- */
+        .app-header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.5px; }
+        .status-badge { font-size: 0.75rem; font-weight: 500; padding: 4px 8px; border-radius: 20px; background: #EEF2FF; color: var(--primary); }
+
+        /* --- CONTAINER --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        /* --- CARDS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .card-title {
+            margin: 0 0 20px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-light); margin-bottom: 6px; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #F9FAFB;
+            transition: all 0.2s;
+            appearance: none; /* Removes default UI on iOS */
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); }
+        .btn-primary:active { transform: scale(0.98); background: var(--primary-dark); }
+        .btn-sm { padding: 8px 16px; font-size: 0.9rem; width: auto; }
+        .btn-delete { background: #FEF2F2; color: var(--danger); font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
+
+        /* --- SEGMENTED CONTROL (TABS) --- */
+        .segmented-control {
+            display: flex;
+            background: #F3F4F6;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .segment-opt {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .segment-opt.active {
+            background: white;
+            color: var(--text-main);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+
+        /* --- USER LIST --- */
+        .user-list {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .user-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+        .user-row:last-child { border-bottom: none; }
+        .user-row:hover { background: #F9FAFB; }
+        .checkbox-custom {
+            width: 20px; height: 20px;
+            margin-right: 12px;
+            accent-color: var(--primary);
+        }
+        .user-name { flex-grow: 1; font-weight: 500; }
+        .custom-amt-input {
+            width: 90px;
+            padding: 8px;
+            font-size: 0.9rem;
+            text-align: right;
+            margin: 0;
+            display: none;
+        }
+
+        /* --- DASHBOARD ITEMS --- */
+        .dash-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .dash-item:last-child { border-bottom: none; }
+        .dash-text { font-size: 0.95rem; font-weight: 500; }
+        .dash-amt { font-family: 'Inter', monospace; font-weight: 700; letter-spacing: -0.5px; }
+        .text-green { color: var(--success); }
+        .text-red { color: var(--danger); }
+
+        /* --- HISTORY ITEMS --- */
+        .history-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .history-main { display: flex; flex-direction: column; gap: 4px; }
+        .hist-desc { font-weight: 600; color: var(--text-main); }
+        .hist-meta { font-size: 0.85rem; color: var(--text-light); }
     </style>
 </head>
 <body>
 
-    <div style="background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-        <label style="font-size: 0.8em; text-transform: uppercase; opacity: 0.7;">👤 Viewing As:</label>
-        <select id="currentUserSelect" onchange="renderDashboard()" style="background: #454d50; color: white; border: none; margin-top: 5px;">
-            <option value="">Loading...</option>
-        </select>
+    <div class="app-header">
+        <div class="app-logo">Splitwiser Pro</div>
+        <div id="statusBadge" class="status-badge">Connecting...</div>
     </div>
 
-    <div id="statusMsg" class="status-msg">Connecting...</div>
+    <div class="container">
 
-    <div class="card">
-        <h2>💸 Add Group Expense</h2>
-        
-        <input type="text" id="desc" placeholder="Description (e.g. Group Dinner)">
-        
-        <label style="font-size: 0.8em; color: #666;">Who Paid?</label>
-        <select id="payerSelect"><option>Loading...</option></select>
-        
-        <label style="font-size: 0.8em; color: #666; margin-top: 10px; display:block;">Total Bill Amount:</label>
-        <input type="number" id="totalAmount" placeholder="e.g. 1500" oninput="recalculateSplits()">
-
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-
-        <label style="font-size: 0.8em; color: #666;">How to Split?</label>
-        <div class="split-tabs">
-            <div class="split-tab active" id="tabEqual" onclick="setSplitType('equal')">Split Equally</div>
-            <div class="split-tab" id="tabCustom" onclick="setSplitType('custom')">Custom Amounts</div>
+        <div class="card" style="padding: 16px; background: #2d3436; color: white;">
+            <label style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">YOU ARE VIEWING AS:</label>
+            <select id="currentUserSelect" onchange="renderDashboard()" style="background: rgba(255,255,255,0.1); border: none; color: white;">
+                <option value="">Loading users...</option>
+            </select>
         </div>
 
-        <label style="font-size: 0.8em; color: #666; margin-bottom: 5px; display:block;">Who is involved? (Check them)</label>
-        <div id="userCheckboxList" class="user-checkbox-list"></div>
-        
-        <div id="mathSummary" style="text-align: right; font-size: 0.85em; color: #666; margin-bottom: 10px; height: 20px;"></div>
+        <div class="card">
+            <h3 class="card-title">💸 Add Expense</h3>
+            
+            <div class="form-group">
+                <input type="text" id="desc" placeholder="What was it? (e.g. Dinner)">
+            </div>
+            
+            <div class="form-group">
+                <input type="number" id="totalAmount" placeholder="Total Amount (e.g. 1500)" oninput="recalculateSplits()">
+            </div>
 
-        <button onclick="addExpense()" id="expBtn">Add Expense</button>
-    </div>
+            <div class="form-group">
+                <label>Who paid?</label>
+                <select id="payerSelect" onchange="recalculateSplits()"><option>Loading...</option></select>
+            </div>
 
-    <div class="card">
-        <h2 id="dashboardTitle">📊 Dashboard</h2>
-        <div id="statusList"></div>
-    </div>
+            <div class="form-group">
+                <label>Split Method</label>
+                <div class="segmented-control">
+                    <div class="segment-opt active" id="tabEqual" onclick="setSplitType('equal')">Equally</div>
+                    <div class="segment-opt" id="tabCustom" onclick="setSplitType('custom')">Custom</div>
+                </div>
+            </div>
 
-    <div class="card">
-        <h2>👥 Add Person</h2>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="newUserName" placeholder="Name">
-            <button onclick="addUser()" style="width: 80px; margin-top:8px;">Add</button>
+            <div class="form-group">
+                <label>Who is involved?</label>
+                <div id="userCheckboxList" class="user-list">
+                    </div>
+            </div>
+
+            <div id="mathSummary" style="text-align: right; font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 15px; height: 20px;"></div>
+
+            <button onclick="addExpense()" class="btn btn-primary" id="addExpBtn">Add Expense</button>
         </div>
-    </div>
 
-    <div class="card">
-        <h2>📜 History</h2>
-        <div id="expenseList"></div>
+        <div class="card">
+            <h3 class="card-title">📊 Dashboard</h3>
+            <div id="statusList">
+                <div style="text-align: center; color: var(--text-light); padding: 20px;">
+                    Select your name at the top to see balances.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">👥 Add New Person</h3>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="newUserName" placeholder="Enter Name">
+                <button onclick="addUser()" class="btn btn-primary btn-sm">Add</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">📜 History</h3>
+            <div id="expenseList">
+                <div style="text-align: center; color: var(--text-light);">No transactions yet.</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // ******************************************************
-        // 👇 YOUR LINK IS NOW PRE-FILLED BELOW 👇
+        // ***************************************************************
+        // ✅ LINK INSERTED BELOW
         const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec"; 
-        // ******************************************************
+        // ***************************************************************
         
         let users = [];
         let expenses = [];
         let currentSplitType = 'equal'; // 'equal' or 'custom'
+        let isSaving = false;
 
-        // --- CORE SYNC FUNCTIONS ---
+        // --- CORE SYNC ---
         async function loadFromCloud() {
-            showStatus("⏳ Syncing...");
+            updateStatus("Syncing...", "busy");
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
                 users = data.users || [];
                 expenses = data.expenses || [];
                 renderAll();
-                showStatus("✅ Updated");
+                updateStatus("Connected", "success");
             } catch (error) {
                 console.error(error);
-                showStatus("❌ Connection Failed");
+                updateStatus("Offline", "error");
             }
         }
 
         async function saveToCloud() {
-            showStatus("💾 Saving...");
+            if (isSaving) return;
+            isSaving = true;
+            updateStatus("Saving...", "busy");
+            
+            const btn = document.getElementById('addExpBtn');
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
             const payload = JSON.stringify({ users, expenses });
-            await fetch(API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload });
-            setTimeout(loadFromCloud, 1500);
+            
+            try {
+                await fetch(API_URL, { 
+                    method: "POST", 
+                    mode: "no-cors", 
+                    headers: { "Content-Type": "text/plain" }, 
+                    body: payload 
+                });
+                
+                setTimeout(() => {
+                    loadFromCloud();
+                    isSaving = false;
+                    btn.innerText = "Add Expense";
+                    btn.disabled = false;
+                }, 1500);
+            } catch (e) {
+                updateStatus("Save Failed", "error");
+                isSaving = false;
+                btn.innerText = "Add Expense";
+                btn.disabled = false;
+            }
         }
 
-        function showStatus(msg) { document.getElementById('statusMsg').innerText = msg; }
+        function updateStatus(msg, type) {
+            const el = document.getElementById('statusBadge');
+            el.innerText = msg;
+            if (type === 'success') { el.style.background = '#D1FAE5'; el.style.color = '#065F46'; }
+            else if (type === 'error') { el.style.background = '#FEE2E2'; el.style.color = '#991B1B'; }
+            else { el.style.background = '#EEF2FF'; el.style.color = '#4F46E5'; }
+        }
 
-        // --- NEW SPLIT LOGIC ---
+        // --- UI LOGIC ---
 
         function setSplitType(type) {
             currentSplitType = type;
-            document.getElementById('tabEqual').className = type === 'equal' ? 'split-tab active' : 'split-tab';
-            document.getElementById('tabCustom').className = type === 'custom' ? 'split-tab active' : 'split-tab';
+            document.getElementById('tabEqual').className = type === 'equal' ? 'segment-opt active' : 'segment-opt';
+            document.getElementById('tabCustom').className = type === 'custom' ? 'segment-opt active' : 'segment-opt';
             
-            // Show/Hide Input boxes based on type
-            const inputs = document.querySelectorAll('.amount-input');
-            inputs.forEach(input => {
-                input.style.display = type === 'custom' ? 'block' : 'none';
-            });
+            const inputs = document.querySelectorAll('.custom-amt-input');
+            inputs.forEach(input => input.style.display = type === 'custom' ? 'block' : 'none');
+            
             recalculateSplits();
         }
 
         function recalculateSplits() {
-            if (currentSplitType === 'custom') return; 
+            if (currentSplitType === 'custom') {
+                document.getElementById('mathSummary').innerText = "";
+                return; 
+            }
 
             const total = parseFloat(document.getElementById('totalAmount').value) || 0;
             const checkboxes = document.querySelectorAll('.user-cb:checked');
             const count = checkboxes.length;
             
-            if (count > 0) {
+            if (count > 0 && total > 0) {
                 const share = (total / count).toFixed(2);
-                document.getElementById('mathSummary').innerText = `Total: ${total} ÷ ${count} people = ₹${share} each`;
+                document.getElementById('mathSummary').innerText = `₹${share} per person`;
             } else {
                 document.getElementById('mathSummary').innerText = '';
             }
@@ -165,30 +376,24 @@
             const payer = document.getElementById('payerSelect').value;
             const checkboxes = document.querySelectorAll('.user-cb:checked');
 
-            // Validation
             if (!desc || !total || payer === "Loading..." || checkboxes.length === 0) {
-                alert("Please fill description, amount, payer, and select at least one person involved.");
+                alert("Please fill in all fields and select people.");
                 return;
             }
 
-            // --- THE GHOST WRITER LOGIC ---
-            
+            // GHOST WRITER LOGIC
             let count = checkboxes.length;
             let equalShare = total / count;
             let entriesAdded = 0;
 
             checkboxes.forEach(cb => {
                 const beneficiary = cb.value;
-                
-                // You don't owe yourself
-                if (beneficiary === payer) return;
+                if (beneficiary === payer) return; // Skip self
 
                 let amountOwed = 0;
-                
                 if (currentSplitType === 'equal') {
                     amountOwed = equalShare;
                 } else {
-                    // Custom Amount: Read from the input box next to the checkbox
                     const inputId = `amt-${beneficiary}`;
                     amountOwed = parseFloat(document.getElementById(inputId).value) || 0;
                 }
@@ -199,57 +404,20 @@
                         desc: `${desc} (Split)`,
                         amount: amountOwed,
                         payer: payer,
-                        beneficiary: beneficiary
+                        beneficiary: beneficiary,
+                        date: new Date().toLocaleDateString()
                     });
                     entriesAdded++;
                 }
             });
 
-            if (entriesAdded === 0 && checkboxes.length > 0) {
-                // If I paid for myself only, no debt is created, but that's okay.
-                // We just alert so the user knows.
-            }
-
-            // Reset and Save
+            // Reset UI
             document.getElementById('desc').value = '';
             document.getElementById('totalAmount').value = '';
             document.querySelectorAll('.user-cb').forEach(cb => cb.checked = false);
-            saveToCloud();
-        }
-
-        // --- RENDERING UI ---
-
-        function renderAll() {
-            updateUserLists();
-            renderDashboard();
-            renderHistory();
-        }
-
-        function updateUserLists() {
-            // 1. Perspective Dropdown
-            const currentUser = document.getElementById('currentUserSelect').value;
-            const options = users.map(u => `<option value="${u}">${u}</option>`).join('');
+            document.getElementById('mathSummary').innerText = '';
             
-            document.getElementById('currentUserSelect').innerHTML = `<option value="">-- Select Your Name --</option>` + options;
-            if(currentUser) document.getElementById('currentUserSelect').value = currentUser;
-
-            // 2. Payer Dropdown
-            const currentPayer = document.getElementById('payerSelect').value;
-            document.getElementById('payerSelect').innerHTML = `<option value="">-- Select Payer --</option>` + options;
-            if(currentPayer) document.getElementById('payerSelect').value = currentPayer;
-
-            // 3. THE CHECKBOX LIST 
-            const listContainer = document.getElementById('userCheckboxList');
-            // We only rebuild if user count changed to keep checkbox state
-            if (listContainer.children.length !== users.length) {
-                listContainer.innerHTML = users.map(u => `
-                    <div class="user-row">
-                        <input type="checkbox" class="user-cb" value="${u}" onchange="recalculateSplits()">
-                        <label>${u}</label>
-                        <input type="number" class="amount-input" id="amt-${u}" placeholder="Amt">
-                    </div>
-                `).join('');
-            }
+            saveToCloud();
         }
 
         function addUser() {
@@ -262,25 +430,57 @@
         }
 
         function deleteExpense(id) {
-            if(confirm("Delete this entry?")) {
+            if(confirm("Delete this transaction?")) {
                 expenses = expenses.filter(e => e.id !== id);
                 saveToCloud();
+            }
+        }
+
+        // --- RENDERERS ---
+
+        function renderAll() {
+            updateUserLists();
+            renderDashboard();
+            renderHistory();
+        }
+
+        function updateUserLists() {
+            const currentUser = document.getElementById('currentUserSelect').value;
+            const currentPayer = document.getElementById('payerSelect').value;
+            
+            const options = users.map(u => `<option value="${u}">${u}</option>`).join('');
+            
+            // Dropdowns
+            const userSelect = document.getElementById('currentUserSelect');
+            userSelect.innerHTML = `<option value="">-- Select Your Name --</option>` + options;
+            if(currentUser) userSelect.value = currentUser;
+
+            const payerSelect = document.getElementById('payerSelect');
+            payerSelect.innerHTML = `<option value="">-- Select Payer --</option>` + options;
+            if(currentPayer) payerSelect.value = currentPayer;
+
+            // Checkbox List (Only rebuild if needed)
+            const listContainer = document.getElementById('userCheckboxList');
+            if (listContainer.children.length !== users.length) {
+                listContainer.innerHTML = users.map(u => `
+                    <div class="user-row">
+                        <input type="checkbox" class="user-cb checkbox-custom" value="${u}" onchange="recalculateSplits()">
+                        <span class="user-name">${u}</span>
+                        <input type="number" class="custom-amt-input" id="amt-${u}" placeholder="0">
+                    </div>
+                `).join('');
             }
         }
 
         function renderDashboard() {
             const me = document.getElementById('currentUserSelect').value;
             const list = document.getElementById('statusList');
-            const title = document.getElementById('dashboardTitle');
-            list.innerHTML = '';
             
             if (!me) {
-                title.innerText = "📊 Dashboard";
-                list.innerHTML = '<div style="text-align:center; color:#999; padding:10px;">Select your name at the top first.</div>';
+                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">Select your name at the top to see your dashboard.</div>';
                 return;
             }
 
-            title.innerText = `Summary for ${me}`;
             let balances = {};
             users.forEach(u => balances[u] = 0);
 
@@ -290,26 +490,47 @@
             });
 
             let html = '';
+            let hasDebt = false;
+            
             for (let person in balances) {
                 if (person === me) continue;
                 const amt = balances[person];
-                if (amt > 0.5) html += `<div class="list-item"><span class="owes-you">${person} owes you</span> <span class="owes-you">₹${amt.toFixed(2)}</span></div>`;
-                else if (amt < -0.5) html += `<div class="list-item"><span class="you-owe">You owe ${person}</span> <span class="you-owe">₹${Math.abs(amt).toFixed(2)}</span></div>`;
+                if (Math.abs(amt) < 0.5) continue; // Skip tiny amounts
+
+                hasDebt = true;
+                if (amt > 0) {
+                    html += `
+                    <div class="dash-item">
+                        <span class="dash-text">${person} owes you</span> 
+                        <span class="dash-amt text-green">₹${amt.toFixed(2)}</span>
+                    </div>`;
+                } else {
+                    html += `
+                    <div class="dash-item">
+                        <span class="dash-text">You owe ${person}</span> 
+                        <span class="dash-amt text-red">₹${Math.abs(amt).toFixed(2)}</span>
+                    </div>`;
+                }
             }
-            if (!html) html = '<div style="text-align:center; color:#777;">All settled up! 🎉</div>';
+            
+            if (!hasDebt) html = '<div style="text-align:center; color:#10B981; padding:15px; font-weight:500;">You are all settled up! 🎉</div>';
             list.innerHTML = html;
         }
 
         function renderHistory() {
             const list = document.getElementById('expenseList');
-            if (expenses.length === 0) { list.innerHTML = '<div style="text-align:center;color:#ccc;">No expenses yet.</div>'; return; }
+            if (expenses.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">No expenses yet.</div>';
+                return;
+            }
             list.innerHTML = expenses.map(e => `
-                <div class="list-item">
-                    <div>
-                        <strong>${e.desc}</strong>
-                        <div style="font-size:0.85em; color:#666;">${e.payer} paid for ${e.beneficiary} <span style="color:#000; font-weight:bold;">₹${e.amount.toFixed(2)}</span></div>
+                <div class="history-item">
+                    <div class="history-main">
+                        <div class="hist-desc">${e.desc}</div>
+                        <div class="hist-meta">${e.payer} paid for ${e.beneficiary}</div>
+                        <div class="hist-meta" style="font-weight:600; color:var(--text-main);">₹${e.amount.toFixed(2)}</div>
                     </div>
-                    <button class="delete-btn" onclick="deleteExpense(${e.id})">Del</button>
+                    <button class="btn btn-delete" onclick="deleteExpense(${e.id})">Delete</button>
                 </div>
             `).reverse().join('');
         }
