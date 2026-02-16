@@ -2,64 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Splitwiser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Splitwiser v2</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f2f5; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 1.2rem; margin-bottom: 15px; }
+        /* BASE STYLES */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 15px; background: #f4f7f6; color: #333; }
         
-        /* Inputs & Buttons */
-        input, select { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 12px; margin-top: 10px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.2s; }
-        button:hover { background: #0056b3; }
-        button:disabled { background: #ccc; cursor: wait; }
+        /* CARDS */
+        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee; }
+        h2 { margin-top: 0; font-size: 1.1rem; margin-bottom: 15px; color: #2c3e50; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Specific Styles */
-        .delete-btn { background: #ff4757; width: auto; padding: 6px 12px; font-size: 14px; }
-        .delete-btn:hover { background: #ff6b81; }
+        /* INPUTS */
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e1e1e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        input:focus, select:focus { outline: none; border-color: #007bff; background: white; }
         
+        /* BUTTONS */
+        button { width: 100%; padding: 14px; margin-top: 10px; background: #007bff; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 16px; transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #cbd5e0; cursor: not-allowed; }
+        
+        /* DELETE BUTTON */
+        .delete-btn { background: #ff4757; width: auto; padding: 6px 12px; font-size: 13px; border-radius: 6px; margin-top: 0; }
+        
+        /* LAYOUT HELPERS */
         .row { display: flex; gap: 10px; }
-        .list-item { border-bottom: 1px solid #f0f0f0; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+        .half { width: 50%; }
+        
+        /* PERSPECTIVE BAR (TOP) */
+        .perspective-bar { background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .perspective-bar label { font-size: 0.85rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+        .perspective-bar select { background: #454d50; color: white; border: none; margin-top: 5px; }
+        
+        /* STATUS */
+        .status-msg { text-align: center; font-size: 0.85rem; margin-bottom: 15px; height: 20px; color: #888; font-weight: 500; }
+        
+        /* LIST ITEMS */
+        .list-item { border-bottom: 1px solid #f0f0f0; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
         .list-item:last-child { border-bottom: none; }
+        .desc-text { font-weight: 600; font-size: 1rem; }
+        .sub-text { font-size: 0.85em; color: #888; margin-top: 4px; }
         
-        .perspective-bar { background: #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
-        .perspective-bar label { font-size: 0.9rem; opacity: 0.8; }
-        
-        .status-msg { text-align: center; font-size: 0.9rem; margin-bottom: 10px; height: 20px; color: #666; }
-        
-        /* Debt Colors */
-        .owes-you { color: #27ae60; font-weight: bold; }
-        .you-owe { color: #c0392b; font-weight: bold; }
+        /* MONEY COLORS */
+        .owes-you { color: #27ae60; font-weight: 700; }
+        .you-owe { color: #c0392b; font-weight: 700; }
+        .amount { font-family: 'Courier New', monospace; letter-spacing: -0.5px; }
     </style>
 </head>
 <body>
 
     <div class="perspective-bar">
-        <label>👀 WHOSE PHONE IS THIS?</label>
+        <label>👤 Viewing As:</label>
         <select id="currentUserSelect" onchange="renderDashboard()">
-            <option value="">-- Loading Users... --</option>
+            <option value="">-- Loading... --</option>
         </select>
     </div>
 
     <div id="statusMsg" class="status-msg">Loading data...</div>
 
     <div class="card">
-        <h2>👥 Add Person</h2>
+        <h2>👥 Add New Person</h2>
         <div class="row">
             <input type="text" id="newUserName" placeholder="Name (e.g. Dad)">
-            <button onclick="addUser()" id="addBtn">Add</button>
+            <button onclick="addUser()" id="addBtn" style="width: 80px;">Add</button>
         </div>
     </div>
 
     <div class="card">
         <h2>💸 Add Expense</h2>
+        
         <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
-        <input type="number" id="amount" placeholder="Amount (e.g. 500)">
+        
+        <div class="row">
+            <div class="half">
+                <label style="font-size: 0.8em; color: #666; margin-left: 5px;">Total Bill ₹</label>
+                <input type="number" id="totalAmount" placeholder="1000">
+            </div>
+            <div class="half">
+                <label style="font-size: 0.8em; color: #666; margin-left: 5px;">Split Type</label>
+                <select id="splitType">
+                    <option value="0.5">Split Half (50%)</option>
+                    <option value="1.0">Full Bill (100%)</option>
+                    <option value="0.333">Split 1/3 (33%)</option>
+                    <option value="0.25">Split 1/4 (25%)</option>
+                </select>
+            </div>
+        </div>
+
         <div class="row">
             <select id="payerSelect"><option>Who Paid?</option></select>
-            <select id="beneficiarySelect"><option>For Whom?</option></select>
+            <select id="beneficiarySelect"><option>Who Owes?</option></select>
         </div>
+        
         <button onclick="addExpense()" id="expBtn">Add Expense</button>
     </div>
 
@@ -74,45 +107,39 @@
     </div>
 
     <script>
-        // *** YOUR SPECIFIC LINK IS HERE ***
-        const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec"; 
+        // ******************************************************
+        // 👇 PASTE YOUR GOOGLE SCRIPT URL INSIDE THE QUOTES 👇
+        const API_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE"; 
+        // ******************************************************
         
         let users = [];
         let expenses = [];
 
         // --- CLOUD SYNC ---
-
         async function loadFromCloud() {
             showStatus("⏳ Syncing...");
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
-                
-                // Safety check if data is new/empty
                 users = data.users || [];
                 expenses = data.expenses || [];
-                
                 renderAll();
-                showStatus("✅ Up to date");
+                showStatus("✅ Updated");
             } catch (error) {
                 console.error(error);
-                showStatus("❌ Connection Failed. Try refreshing.");
+                showStatus("❌ Connection Failed");
             }
         }
 
         async function saveToCloud() {
             showStatus("💾 Saving...");
             const payload = JSON.stringify({ users, expenses });
-            
-            // We send data blindly to avoid CORS errors
             await fetch(API_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "text/plain" },
                 body: payload
             });
-
-            // Wait 1.5 seconds then reload to confirm save
             setTimeout(loadFromCloud, 1500);
         }
 
@@ -132,19 +159,45 @@
         }
 
         function addExpense() {
-            const desc = document.getElementById('desc').value;
-            const amount = parseFloat(document.getElementById('amount').value);
+            // 1. Get Values
+            const descRaw = document.getElementById('desc').value;
+            const totalBill = parseFloat(document.getElementById('totalAmount').value);
+            const splitFactor = parseFloat(document.getElementById('splitType').value);
             const payer = document.getElementById('payerSelect').value;
             const beneficiary = document.getElementById('beneficiarySelect').value;
 
-            if (desc && amount && payer !== 'Who Paid?' && beneficiary !== 'For Whom?' && payer !== beneficiary) {
-                expenses.push({ id: Date.now(), desc, amount, payer, beneficiary });
-                document.getElementById('desc').value = '';
-                document.getElementById('amount').value = '';
-                saveToCloud();
-            } else {
-                alert("Please fill all fields. Note: Payer and Receiver cannot be the same.");
+            // 2. Validate
+            if (!descRaw || !totalBill || payer === 'Who Paid?' || beneficiary === 'Who Owes?') {
+                alert("Please fill in all fields!");
+                return;
             }
+            if (payer === beneficiary) {
+                alert("Payer and Person Who Owes cannot be the same.");
+                return;
+            }
+
+            // 3. Calculate DEBT (The magic part)
+            // Example: Bill 1000, Split 50% -> Debt is 500.
+            const debtAmount = totalBill * splitFactor;
+            
+            // Create a nice description like "Dinner (50%)"
+            const percentage = (splitFactor * 100).toFixed(0) + "%";
+            const finalDesc = `${descRaw} (${percentage})`;
+
+            // 4. Save
+            expenses.push({ 
+                id: Date.now(), 
+                desc: finalDesc, 
+                amount: debtAmount, // We save the DEBT amount, not the total bill
+                payer: payer, 
+                beneficiary: beneficiary 
+            });
+
+            // 5. Reset Form
+            document.getElementById('desc').value = '';
+            document.getElementById('totalAmount').value = '';
+            
+            saveToCloud();
         }
 
         function deleteExpense(id) {
@@ -154,7 +207,7 @@
             }
         }
 
-        // --- RENDERING (MAKING IT LOOK GOOD) ---
+        // --- RENDERING ---
 
         function renderAll() {
             updateDropdowns();
@@ -164,11 +217,9 @@
 
         function updateDropdowns() {
             const currentVal = document.getElementById('currentUserSelect').value;
-            
-            // Helper to make option tags
             const makeOptions = (selected) => users.map(u => `<option value="${u}" ${u === selected ? 'selected' : ''}>${u}</option>`).join('');
             
-            // Update the Top "Perspective" Bar
+            // Main Perspective Dropdown
             const userSelect = document.getElementById('currentUserSelect');
             if (users.length === 0) {
                 userSelect.innerHTML = `<option value="">-- Add a person first --</option>`;
@@ -176,9 +227,9 @@
                 userSelect.innerHTML = `<option value="">-- Select Your Name --</option>` + makeOptions(currentVal);
             }
 
-            // Update Expense Dropdowns
+            // Expense Dropdowns
             document.getElementById('payerSelect').innerHTML = `<option>Who Paid?</option>` + makeOptions("");
-            document.getElementById('beneficiarySelect').innerHTML = `<option>For Whom?</option>` + makeOptions("");
+            document.getElementById('beneficiarySelect').innerHTML = `<option>Who Owes?</option>` + makeOptions("");
         }
 
         function renderDashboard() {
@@ -190,7 +241,7 @@
             
             if (!me) {
                 title.innerText = "📊 Dashboard";
-                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">Select "Whose Phone Is This?" at the top to see who owes you money.</div>';
+                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">Select your name at the top to see debts.</div>';
                 return;
             }
 
@@ -211,14 +262,14 @@
             for (let person in balances) {
                 if (person === me) continue;
                 const amt = balances[person];
-                if (amt > 0) {
-                    html += `<div class="list-item"><span class="owes-you">${person} owes you</span> <span class="owes-you">$${amt.toFixed(2)}</span></div>`;
-                } else if (amt < 0) {
-                    html += `<div class="list-item"><span class="you-owe">You owe ${person}</span> <span class="you-owe">$${Math.abs(amt).toFixed(2)}</span></div>`;
+                if (amt > 0.5) { // Show if debt is more than 50 cents
+                    html += `<div class="list-item"><span class="owes-you">${person} owes you</span> <span class="owes-you amount">₹${amt.toFixed(2)}</span></div>`;
+                } else if (amt < -0.5) {
+                    html += `<div class="list-item"><span class="you-owe">You owe ${person}</span> <span class="you-owe amount">₹${Math.abs(amt).toFixed(2)}</span></div>`;
                 }
             }
             
-            if (html === '') html = '<div style="text-align:center; color:#777; padding:10px;">You are all settled up! 🎉</div>';
+            if (html === '') html = '<div style="text-align:center; color:#777; padding:10px;">All settled up! 🎉</div>';
             list.innerHTML = html;
         }
 
@@ -231,9 +282,10 @@
             list.innerHTML = expenses.map(e => `
                 <div class="list-item">
                     <div>
-                        <strong>${e.desc}</strong>
-                        <div style="font-size:0.85em; color:#666;">
-                            ${e.payer} paid $${e.amount} for ${e.beneficiary}
+                        <div class="desc-text">${e.desc}</div>
+                        <div class="sub-text">
+                            ${e.payer} paid for ${e.beneficiary} <br>
+                            <span style="color:#555; font-weight:bold;">Debt Created: ₹${e.amount.toFixed(2)}</span>
                         </div>
                     </div>
                     <button class="delete-btn" onclick="deleteExpense(${e.id})">Del</button>
@@ -241,7 +293,7 @@
             `).reverse().join('');
         }
 
-        // START THE APP
+        // START
         loadFromCloud();
     </script>
 </body>
