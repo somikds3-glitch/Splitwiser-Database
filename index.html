@@ -44,7 +44,8 @@
         .user-option { padding: 12px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; cursor: pointer; transition: all 0.2s; }
         .user-option.selected { background-color: #e0e7ff; border-left: 4px solid var(--primary); }
         .user-option.selected .user-name { color: var(--primary); font-weight: 700; }
-        
+        .check-icon { margin-right: 10px; font-size: 1.1rem; }
+
         .split-tools { display: flex; gap: 8px; margin-bottom: 15px; }
         .tool-chip { flex: 1; padding: 8px; text-align: center; background: #eee; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 600; color: #666; transition: 0.2s; }
         .tool-chip.active { background: var(--text); color: white; }
@@ -127,11 +128,12 @@
         </div>
 
         <div class="card">
-            <div class="card-header">👥 Add Person</div>
+            <div class="card-header">👥 Add/Upgrade Person</div>
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="newUserName" placeholder="Name" style="margin-bottom:0;">
-                <button onclick="addUser()" class="btn" style="width: auto;">Add</button>
+                <input type="email" id="newUserEmail" placeholder="Email ID" style="margin-bottom:0;">
             </div>
+            <button onclick="addOrUpgradeUser()" class="btn" style="width: auto; margin-top:10px;">Add / Upgrade</button>
         </div>
 
         <div class="card">
@@ -142,10 +144,10 @@
 
     <script>
         // ***************************************************************
-        // 1. YOUR GOOGLE SCRIPT LINK
+        // 1. GOOGLE SCRIPT LINK
         const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec";
 
-        // 2. PASTE YOUR GITHUB LINK HERE
+        // 2. YOUR APP LINK (Already Inserted)
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -183,6 +185,10 @@
 
         function setStatus(msg) { document.getElementById('statusBadge').innerText = msg; }
         function toggleDropdown() { document.getElementById('dropdownContent').classList.toggle('open'); }
+
+        // --- SAFE USER HELPERS (Handles old Strings & new Objects) ---
+        function getUserName(u) { return (typeof u === 'object' && u !== null) ? u.name : u; }
+        function getUserEmail(u) { return (typeof u === 'object' && u !== null) ? u.email : null; }
 
         function toggleUserSelection(name, el) {
             if (selectedUsers.has(name)) {
@@ -236,7 +242,8 @@
             let currentSum = 0;
             let inputsValid = true;
             selectedUsers.forEach(u => {
-                const val = parseFloat(document.getElementById(`inp-${u}`).value);
+                const safeName = u.replace(/\s+/g, '-');
+                const val = parseFloat(document.getElementById(`inp-${safeName}`).value);
                 if(isNaN(val)) inputsValid = false;
                 else currentSum += val;
             });
@@ -269,7 +276,9 @@
             selectedUsers.forEach(u => {
                 if (u === payer) return;
                 let debt = 0;
-                const inputVal = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
+                const safeName = u.replace(/\s+/g, '-');
+                const inputVal = parseFloat(document.getElementById(`inp-${safeName}`).value) || 0;
+                
                 if (splitMode === 'equal') debt = equalShare;
                 else if (splitMode === 'amount') debt = inputVal;
                 else if (splitMode === 'percent') debt = (total * (inputVal / 100));
@@ -304,9 +313,52 @@
             saveToCloud();
         }
 
-        function addUser() {
+        // --- SMART ADD / UPGRADE USER ---
+        function addOrUpgradeUser() {
             const name = document.getElementById('newUserName').value.trim();
-            if (name && !users.includes(name)) { users.push(name); document.getElementById('newUserName').value = ''; saveToCloud(); }
+            const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
+
+            if (!name || !email) { alert("⚠️ Please enter both Name and Email ID."); return; }
+
+            // 1. Check for Duplicate Email (Block)
+            const existingEmail = users.find(u => getUserEmail(u) === email);
+            if (existingEmail) {
+                alert(`⛔ Error: The email '${email}' is already taken by ${getUserName(existingEmail)}.`);
+                return;
+            }
+
+            // 2. Check for Legacy User (Upgrade)
+            // Finds if this name exists as a simple string
+            const legacyIndex = users.findIndex(u => typeof u === 'string' && u.toLowerCase() === name.toLowerCase());
+
+            if (legacyIndex !== -1) {
+                // UPGRADE MODE
+                if(confirm(`User '${name}' exists without an email. Do you want to update them with ${email}?`)) {
+                    users[legacyIndex] = { name: name, email: email };
+                    alert("✅ User Upgraded Successfully!");
+                    clearUserInputs();
+                    saveToCloud();
+                }
+                return;
+            }
+
+            // 3. Check for Duplicate Name Object (Block)
+            const existingNameObj = users.find(u => typeof u === 'object' && u.name.toLowerCase() === name.toLowerCase());
+            if (existingNameObj) {
+                alert(`⛔ Error: User '${name}' already exists (Email: ${existingNameObj.email}).`);
+                return;
+            }
+
+            // 4. Create New User
+            users.push({ name: name, email: email });
+            alert("✅ New User Added!");
+            clearUserInputs();
+            saveToCloud();
+        }
+
+        function clearUserInputs() {
+            document.getElementById('newUserName').value = '';
+            document.getElementById('newUserEmail').value = '';
         }
 
         function deleteExpense(id) {
@@ -324,30 +376,34 @@
         }
 
         function closeModal() { document.getElementById('notifyModal').style.display = 'none'; }
-
-        // --- NEW: REFRESH VIEW FUNCTION ---
-        // This is called when the user dropdown changes
-        function refreshView() {
-            renderDashboard();
-            renderHistory();
-        }
+        function refreshView() { renderDashboard(); renderHistory(); }
 
         function renderAll() {
             const currentUser = document.getElementById('currentUserSelect').value;
             const currentPayer = document.getElementById('payerSelect').value;
-            const ops = users.map(u => `<option value="${u}">${u}</option>`).join('');
+            
+            const ops = users.map(u => {
+                const n = getUserName(u);
+                return `<option value="${n}">${n}</option>`;
+            }).join('');
+
             document.getElementById('currentUserSelect').innerHTML = `<option value="">-- Select Me --</option>` + ops;
             document.getElementById('payerSelect').innerHTML = `<option>Loading...</option>` + ops;
+            
             if(currentUser) document.getElementById('currentUserSelect').value = currentUser;
             if(currentPayer) document.getElementById('payerSelect').value = currentPayer;
 
             const list = document.getElementById('dropdownContent');
             if (list.children.length !== users.length) {
-                list.innerHTML = users.map(u => `
-                    <div class="user-option" onclick="toggleUserSelection('${u}', this)" data-name="${u}">
-                        <span class="check-icon">⬜</span> <span class="user-name">${u}</span>
-                        <input type="number" class="custom-input" id="inp-${u}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
-                    </div>`).join('');
+                list.innerHTML = users.map(u => {
+                    const n = getUserName(u);
+                    const safeName = n.replace(/\s+/g, '-');
+                    return `
+                    <div class="user-option" onclick="toggleUserSelection('${n}', this)" data-name="${n}">
+                        <span class="check-icon">⬜</span> <span class="user-name">${n}</span>
+                        <input type="number" class="custom-input" id="inp-${safeName}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
+                    </div>`;
+                }).join('');
             }
             refreshView();
         }
@@ -358,7 +414,9 @@
             box.innerHTML = '';
             if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name at top</div>'; return; }
             let balances = {};
-            users.forEach(u => balances[u] = 0);
+            
+            users.forEach(u => balances[getUserName(u)] = 0);
+            
             expenses.forEach(e => {
                 if(e.payer === me) balances[e.beneficiary] += e.amount;
                 else if(e.beneficiary === me) balances[e.payer] -= e.amount;
@@ -383,7 +441,6 @@
                 return;
             }
 
-            // FILTER: Only show expenses I'm involved in
             const myExpenses = expenses.filter(e => e.payer === me || e.beneficiary === me);
 
             if (myExpenses.length === 0) {
