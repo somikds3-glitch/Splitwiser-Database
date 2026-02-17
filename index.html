@@ -34,11 +34,11 @@
         .btn { width: 100%; padding: 14px; background: var(--text); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; }
         .btn-primary { background: var(--primary); }
         .btn-primary:active { transform: scale(0.98); }
-        .btn-delete { background: #fee2e2; color: #991b1b; padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; }
+        .btn-delete { background: #fee2e2; color: #991b1b; padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; cursor: pointer; border: none; }
 
         /* --- CUSTOM MULTI-SELECT DROPDOWN --- */
         .dropdown-trigger {
-            padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500;
+            padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; margin-bottom: 10px;
         }
         .dropdown-content {
             display: none; border: 1px solid var(--border); border-radius: 10px; margin-top: 5px; background: white; max-height: 300px; overflow-y: auto;
@@ -62,22 +62,22 @@
 
         /* --- CUSTOM SPLIT UI --- */
         .split-tools { display: flex; gap: 10px; margin-bottom: 10px; }
-        .tool-chip { padding: 6px 12px; background: #eee; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .tool-chip { padding: 8px 14px; background: #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; font-weight: 500; transition: background 0.2s; }
         .tool-chip.active { background: var(--text); color: white; }
 
-        .custom-input { width: 80px; margin: 0; padding: 6px; font-size: 0.9rem; text-align: right; margin-left: auto; display: none; }
+        .custom-input { width: 90px; margin: 0; padding: 8px; font-size: 0.9rem; text-align: right; margin-left: auto; display: none; border: 1px solid #ddd; }
 
         /* --- VALIDATION BAR --- */
         .validation-bar {
-            background: #eee; padding: 10px; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; margin-top: 10px; display: none;
+            background: #eee; padding: 12px; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; margin-top: 15px; display: none;
         }
         .val-success { background: #d1fae5; color: #065f46; }
         .val-error { background: #fee2e2; color: #991b1b; }
 
         /* --- DASHBOARD --- */
-        .dash-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
-        .money-plus { color: var(--success); font-weight: 700; }
-        .money-minus { color: var(--danger); font-weight: 700; }
+        .dash-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; align-items: center; }
+        .money-plus { color: var(--success); font-weight: 700; font-size: 1.1rem; }
+        .money-minus { color: var(--danger); font-weight: 700; font-size: 1.1rem; }
         
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -85,15 +85,15 @@
 <body>
 
     <div style="text-align: center; margin-bottom: 10px;">
-        <span id="statusBadge" style="background:#e5e7eb; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Connecting...</span>
+        <span id="statusBadge" style="background:#e5e7eb; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #666;">Connecting...</span>
     </div>
 
     <div class="container">
         
-        <div class="card" style="background: #1f2937; color: white;">
-            <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase;">Viewing As</label>
+        <div class="card" style="background: #1f2937; color: white; padding: 15px;">
+            <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px;">Viewing As</label>
             <select id="currentUserSelect" onchange="renderDashboard()" style="background: #374151; color: white; border:none; margin-bottom:0; margin-top:5px;">
-                <option>Loading...</option>
+                <option value="">Loading...</option>
             </select>
         </div>
 
@@ -104,12 +104,12 @@
             
             <div style="display: flex; gap: 10px;">
                 <div style="flex:1">
-                    <label style="font-size:0.8rem; color:#666;">Total Bill</label>
-                    <input type="number" id="totalAmount" placeholder="0.00" oninput="validateMath()">
+                    <label style="font-size:0.8rem; color:#666;">Total Bill (₹)</label>
+                    <input type="number" id="totalAmount" placeholder="0" oninput="validateMath()">
                 </div>
                 <div style="flex:1">
                     <label style="font-size:0.8rem; color:#666;">Who Paid?</label>
-                    <select id="payerSelect"><option>Loading...</option></select>
+                    <select id="payerSelect" onchange="validateMath()"><option>Loading...</option></select>
                 </div>
             </div>
 
@@ -121,17 +121,17 @@
                 </div>
 
             <div style="margin-top: 15px;">
-                <label style="font-size:0.8rem; color:#666;">Split Method:</label>
+                <label style="font-size:0.8rem; color:#666; margin-bottom: 8px; display: block;">Split Method:</label>
                 <div class="split-tools">
                     <div class="tool-chip active" id="modeEqual" onclick="setMode('equal')">Equal Split</div>
-                    <div class="tool-chip" id="modeAmt" onclick="setMode('amount')">Exact Amounts ($)</div>
-                    <div class="tool-chip" id="modePct" onclick="setMode('percent')">Percentages (%)</div>
+                    <div class="tool-chip" id="modeAmt" onclick="setMode('amount')">Exact ₹</div>
+                    <div class="tool-chip" id="modePct" onclick="setMode('percent')">% Percent</div>
                 </div>
             </div>
 
             <div id="mathBar" class="validation-bar"></div>
 
-            <button onclick="addExpense()" id="saveBtn" class="btn btn-primary" style="margin-top: 15px;">Add Expense</button>
+            <button onclick="addExpense()" id="saveBtn" class="btn btn-primary" style="margin-top: 20px;">Add Expense</button>
         </div>
 
         <div class="card">
@@ -161,6 +161,7 @@
         let expenses = [];
         let splitMode = 'equal'; // equal, amount, percent
         let selectedUsers = new Set();
+        let isSaving = false;
 
         // --- CORE SYNC ---
         async function loadFromCloud() {
@@ -176,17 +177,22 @@
         }
 
         async function saveToCloud() {
+            if(isSaving) return;
+            isSaving = true;
             setStatus("Saving...");
-            document.getElementById('saveBtn').disabled = true;
-            document.getElementById('saveBtn').innerText = "Saving...";
+            const btn = document.getElementById('saveBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "Saving...";
+            btn.disabled = true;
             
             const payload = JSON.stringify({ users, expenses });
             await fetch(API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload });
             
             setTimeout(() => { 
                 loadFromCloud(); 
-                document.getElementById('saveBtn').disabled = false;
-                document.getElementById('saveBtn').innerText = "Add Expense";
+                isSaving = false;
+                btn.disabled = false;
+                btn.innerText = originalText;
             }, 1500);
         }
 
@@ -197,8 +203,14 @@
             document.getElementById('dropdownContent').classList.toggle('open');
         }
 
+        // Close dropdown if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-trigger') && !event.target.closest('.dropdown-content')) {
+                document.getElementById('dropdownContent').classList.remove('open');
+            }
+        }
+
         function toggleUserSelection(name, el) {
-            // Toggle selection logic
             if (selectedUsers.has(name)) {
                 selectedUsers.delete(name);
                 el.classList.remove('selected');
@@ -207,8 +219,12 @@
             } else {
                 selectedUsers.add(name);
                 el.classList.add('selected');
-                // Show input only if custom mode
-                if (splitMode !== 'equal') el.querySelector('.custom-input').style.display = 'block';
+                if (splitMode !== 'equal') {
+                    const inp = el.querySelector('.custom-input');
+                    inp.style.display = 'block';
+                    // Auto-focus the input for convenience
+                    setTimeout(() => inp.focus(), 50);
+                }
                 el.querySelector('.check-icon').innerText = '✅';
             }
             
@@ -234,7 +250,7 @@
                     input.placeholder = '';
                 } else if (mode === 'amount') {
                     input.style.display = isSelected ? 'block' : 'none';
-                    input.placeholder = '$';
+                    input.placeholder = '₹';
                 } else if (mode === 'percent') {
                     input.style.display = isSelected ? 'block' : 'none';
                     input.placeholder = '%';
@@ -250,7 +266,8 @@
 
             if (selectedUsers.size === 0 || total === 0) {
                 bar.style.display = 'none';
-                return true; // Weak validation, real check on save
+                btn.disabled = false;
+                return true; 
             }
 
             bar.style.display = 'block';
@@ -258,7 +275,7 @@
             if (splitMode === 'equal') {
                 const share = (total / selectedUsers.size).toFixed(2);
                 bar.className = 'validation-bar val-success';
-                bar.innerText = `Equal Split: $${share} per person`;
+                bar.innerText = `Equal Split: ₹${share} per person`;
                 btn.disabled = false;
                 return true;
             }
@@ -272,21 +289,22 @@
 
             if (splitMode === 'amount') {
                 const diff = total - currentSum;
-                if (Math.abs(diff) < 0.1) {
+                if (Math.abs(diff) < 0.5) { // Allowing small float error
                     bar.className = 'validation-bar val-success';
-                    bar.innerText = "✅ Perfect Match ($" + currentSum + ")";
+                    bar.innerText = "✅ Perfect Match (₹" + currentSum + ")";
                     btn.disabled = false;
                     return true;
                 } else {
                     bar.className = 'validation-bar val-error';
-                    bar.innerText = `❌ Sum is $${currentSum}. Remaining: $${diff.toFixed(2)}`;
+                    bar.innerText = `❌ Sum is ₹${currentSum}. Remaining: ₹${diff.toFixed(2)}`;
                     btn.disabled = true;
                     return false;
                 }
             }
 
             if (splitMode === 'percent') {
-                if (Math.abs(100 - currentSum) < 0.1) {
+                const diff = 100 - currentSum;
+                if (Math.abs(diff) < 0.1) {
                     bar.className = 'validation-bar val-success';
                     bar.innerText = "✅ Total is 100%";
                     btn.disabled = false;
@@ -313,14 +331,15 @@
 
             // FINAL MATH CHECK (Double safety)
             if (splitMode !== 'equal' && !validateMath()) {
-                alert("The numbers don't add up! Check the red box."); return;
+                alert("The math doesn't add up! Check the red box."); return;
             }
 
             let entriesAdded = 0;
             const equalShare = total / selectedUsers.size;
 
             selectedUsers.forEach(u => {
-                if (u === payer) return; // Don't owe self
+                // If I paid, I don't owe myself. But we need to account for my share in the logic.
+                if (u === payer) return; 
 
                 let debt = 0;
                 const inputVal = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
@@ -346,8 +365,9 @@
             document.getElementById('desc').value = '';
             document.getElementById('totalAmount').value = '';
             selectedUsers.clear();
-            renderAll();
             document.getElementById('dropdownLabel').innerHTML = `Select People (0) <span>▼</span>`;
+            document.getElementById('mathBar').style.display = 'none';
+            renderAll();
             saveToCloud();
         }
 
@@ -361,7 +381,7 @@
         }
 
         function deleteExpense(id) {
-            if(confirm("Delete this?")) {
+            if(confirm("Delete this entry?")) {
                 expenses = expenses.filter(e => e.id !== id);
                 saveToCloud();
             }
@@ -387,9 +407,9 @@
             if (list.children.length !== users.length) {
                 list.innerHTML = users.map(u => `
                     <div class="user-option" onclick="toggleUserSelection('${u}', this)">
-                        <span class="check-icon" style="margin-right:10px;">⬜</span>
+                        <span class="check-icon" style="margin-right:10px; font-size:1.2rem;">⬜</span>
                         <span class="user-name">${u}</span>
-                        <input type="number" class="custom-input" id="inp-${u}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
+                        <input type="number" class="custom-input" id="inp-${u}" placeholder="₹" onclick="event.stopPropagation()" oninput="validateMath()">
                     </div>
                 `).join('');
             }
@@ -403,7 +423,7 @@
             const box = document.getElementById('dashboardList');
             box.innerHTML = '';
 
-            if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name</div>'; return; }
+            if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name at the top</div>'; return; }
 
             let balances = {};
             users.forEach(u => balances[u] = 0);
@@ -418,17 +438,25 @@
                 const val = balances[u];
                 const colorClass = val > 0 ? 'money-plus' : 'money-minus';
                 const text = val > 0 ? `${u} owes you` : `You owe ${u}`;
-                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">$${Math.abs(val).toFixed(2)}</span></div>`;
+                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">₹${Math.abs(val).toFixed(2)}</span></div>`;
             }
-            box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">Settled Up</div>';
+            box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">Settled Up! 🎉</div>';
         }
 
         function renderHistory() {
-            document.getElementById('expenseList').innerHTML = expenses.map(e => `
-                <div style="padding:10px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
-                    <div><b>${e.desc}</b><br><small>${e.payer} paid for ${e.beneficiary}</small></div>
-                    <div style="text-align:right;"><b>$${e.amount.toFixed(2)}</b><br>
-                    <button class="btn-delete" onclick="deleteExpense(${e.id})">Del</button></div>
+            const list = document.getElementById('expenseList');
+            if (expenses.length === 0) { list.innerHTML = '<div style="padding:15px; text-align:center; color:#ccc;">No transactions yet.</div>'; return; }
+            
+            list.innerHTML = expenses.map(e => `
+                <div style="padding:12px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:600; color:#374151;">${e.desc}</div>
+                        <div style="font-size:0.85rem; color:#6b7280;">${e.payer} paid for ${e.beneficiary}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:700; color:#1f2937;">₹${e.amount.toFixed(2)}</div>
+                        <button class="btn-delete" onclick="deleteExpense(${e.id})" style="margin-top:4px;">Del</button>
+                    </div>
                 </div>
             `).reverse().join('');
         }
