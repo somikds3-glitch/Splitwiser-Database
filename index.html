@@ -8,9 +8,9 @@
     <style>
         /* --- VARIABLES & THEME --- */
         :root {
-            --primary: #8b5cf6; /* PURPLE */
-            --primary-light: #f3e8ff;
-            --bg: #F9FAFB;
+            --primary: #6366f1; /* INDIGO */
+            --primary-light: #e0e7ff;
+            --bg: #F3F4F6;
             --card: #FFFFFF;
             --text: #1f2937;
             --border: #e5e7eb;
@@ -27,21 +27,21 @@
         .card-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
 
         /* --- INPUTS --- */
-        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; background: #fff; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; background: #fff; appearance: none; }
         input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
         /* --- BUTTONS --- */
-        .btn { width: 100%; padding: 14px; background: var(--text); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+        .btn { width: 100%; padding: 14px; background: var(--text); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .btn-primary { background: var(--primary); }
         .btn-primary:active { transform: scale(0.98); }
-        .btn-delete { background: #fee2e2; color: #991b1b; padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; cursor: pointer; border: none; }
+        .btn-delete { background: #fee2e2; color: #991b1b; padding: 6px 12px; font-size: 0.75rem; width: auto; border-radius: 8px; font-weight: 600; border: none; cursor: pointer;}
 
         /* --- CUSTOM MULTI-SELECT DROPDOWN --- */
         .dropdown-trigger {
-            padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; margin-bottom: 10px;
+            padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; margin-bottom: 12px;
         }
         .dropdown-content {
-            display: none; border: 1px solid var(--border); border-radius: 10px; margin-top: 5px; background: white; max-height: 300px; overflow-y: auto;
+            display: none; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; background: white; max-height: 250px; overflow-y: auto;
         }
         .dropdown-content.open { display: block; animation: slideDown 0.2s ease-out; }
         
@@ -59,25 +59,26 @@
             color: var(--primary);
             font-weight: 700;
         }
+        .check-icon { margin-right: 10px; font-size: 1.1rem; }
 
         /* --- CUSTOM SPLIT UI --- */
-        .split-tools { display: flex; gap: 10px; margin-bottom: 10px; }
-        .tool-chip { padding: 8px 14px; background: #eee; border-radius: 20px; font-size: 0.85rem; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+        .split-tools { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tool-chip { flex: 1; padding: 8px; text-align: center; background: #eee; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 600; color: #666; transition: 0.2s; }
         .tool-chip.active { background: var(--text); color: white; }
 
-        .custom-input { width: 90px; margin: 0; padding: 8px; font-size: 0.9rem; text-align: right; margin-left: auto; display: none; border: 1px solid #ddd; }
+        .custom-input { width: 80px; margin: 0; padding: 6px; font-size: 0.9rem; text-align: right; margin-left: auto; display: none; border: 1px solid #ddd; }
 
         /* --- VALIDATION BAR --- */
         .validation-bar {
-            background: #eee; padding: 12px; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; margin-top: 15px; display: none;
+            padding: 10px; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; margin-top: 10px; display: none;
         }
         .val-success { background: #d1fae5; color: #065f46; }
         .val-error { background: #fee2e2; color: #991b1b; }
 
         /* --- DASHBOARD --- */
-        .dash-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; align-items: center; }
-        .money-plus { color: var(--success); font-weight: 700; font-size: 1.1rem; }
-        .money-minus { color: var(--danger); font-weight: 700; font-size: 1.1rem; }
+        .dash-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+        .money-plus { color: var(--success); font-weight: 700; }
+        .money-minus { color: var(--danger); font-weight: 700; }
         
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -85,53 +86,51 @@
 <body>
 
     <div style="text-align: center; margin-bottom: 10px;">
-        <span id="statusBadge" style="background:#e5e7eb; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #666;">Connecting...</span>
+        <span id="statusBadge" style="background:#e5e7eb; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: #555;">Connecting...</span>
     </div>
 
     <div class="container">
         
         <div class="card" style="background: #1f2937; color: white; padding: 15px;">
-            <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px;">Viewing As</label>
+            <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px;">Viewing As</label>
             <select id="currentUserSelect" onchange="renderDashboard()" style="background: #374151; color: white; border:none; margin-bottom:0; margin-top:5px;">
-                <option value="">Loading...</option>
+                <option>Loading...</option>
             </select>
         </div>
 
         <div class="card">
             <div class="card-header">💸 New Expense</div>
             
-            <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
+            <input type="text" id="desc" placeholder="Description (e.g. Group Dinner)">
             
             <div style="display: flex; gap: 10px;">
                 <div style="flex:1">
-                    <label style="font-size:0.8rem; color:#666;">Total Bill (₹)</label>
-                    <input type="number" id="totalAmount" placeholder="0" oninput="validateMath()">
+                    <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:4px; display:block;">TOTAL BILL</label>
+                    <input type="number" id="totalAmount" placeholder="0.00" oninput="validateMath()">
                 </div>
                 <div style="flex:1">
-                    <label style="font-size:0.8rem; color:#666;">Who Paid?</label>
-                    <select id="payerSelect" onchange="validateMath()"><option>Loading...</option></select>
+                    <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:4px; display:block;">WHO PAID?</label>
+                    <select id="payerSelect"><option>Loading...</option></select>
                 </div>
             </div>
 
-            <label style="font-size:0.8rem; color:#666; display:block; margin-bottom:5px;">Who is involved?</label>
+            <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:6px; display:block;">SPLIT METHOD</label>
+            <div class="split-tools">
+                <div class="tool-chip active" id="modeEqual" onclick="setMode('equal')">Equal</div>
+                <div class="tool-chip" id="modeAmt" onclick="setMode('amount')">Exact Amount</div>
+                <div class="tool-chip" id="modePct" onclick="setMode('percent')">Percent %</div>
+            </div>
+
+            <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:4px; display:block;">WHO IS INVOLVED?</label>
             <div class="dropdown-trigger" onclick="toggleDropdown()" id="dropdownLabel">
-                Select People (0) <span>▼</span>
+                Select People... <span>▼</span>
             </div>
             <div id="dropdownContent" class="dropdown-content">
                 </div>
 
-            <div style="margin-top: 15px;">
-                <label style="font-size:0.8rem; color:#666; margin-bottom: 8px; display: block;">Split Method:</label>
-                <div class="split-tools">
-                    <div class="tool-chip active" id="modeEqual" onclick="setMode('equal')">Equal Split</div>
-                    <div class="tool-chip" id="modeAmt" onclick="setMode('amount')">Exact ₹</div>
-                    <div class="tool-chip" id="modePct" onclick="setMode('percent')">% Percent</div>
-                </div>
-            </div>
-
             <div id="mathBar" class="validation-bar"></div>
 
-            <button onclick="addExpense()" id="saveBtn" class="btn btn-primary" style="margin-top: 20px;">Add Expense</button>
+            <button onclick="addExpense()" id="saveBtn" class="btn btn-primary" style="margin-top: 15px;">Add Expense</button>
         </div>
 
         <div class="card">
@@ -143,7 +142,7 @@
             <div class="card-header">👥 Add Person</div>
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="newUserName" placeholder="Name" style="margin-bottom:0;">
-                <button onclick="addUser()" class="btn" style="width: auto;">Add</button>
+                <button onclick="addUser()" class="btn" style="width: auto; padding: 12px 20px;">Add</button>
             </div>
         </div>
 
@@ -154,9 +153,11 @@
     </div>
 
     <script>
-        // ✅ YOUR LINK IS BELOW
+        // ***************************************************************
+        // ✅ YOUR LINK IS INSERTED BELOW
         const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec";
-        
+        // ***************************************************************
+
         let users = [];
         let expenses = [];
         let splitMode = 'equal'; // equal, amount, percent
@@ -186,14 +187,21 @@
             btn.disabled = true;
             
             const payload = JSON.stringify({ users, expenses });
-            await fetch(API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload });
             
-            setTimeout(() => { 
-                loadFromCloud(); 
+            try {
+                await fetch(API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload });
+                setTimeout(() => { 
+                    loadFromCloud(); 
+                    isSaving = false;
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }, 1500);
+            } catch(e) {
                 isSaving = false;
-                btn.disabled = false;
                 btn.innerText = originalText;
-            }, 1500);
+                btn.disabled = false;
+                setStatus("Save Failed");
+            }
         }
 
         function setStatus(msg) { document.getElementById('statusBadge').innerText = msg; }
@@ -201,13 +209,6 @@
         // --- UI LOGIC ---
         function toggleDropdown() {
             document.getElementById('dropdownContent').classList.toggle('open');
-        }
-
-        // Close dropdown if clicked outside
-        window.onclick = function(event) {
-            if (!event.target.matches('.dropdown-trigger') && !event.target.closest('.dropdown-content')) {
-                document.getElementById('dropdownContent').classList.remove('open');
-            }
         }
 
         function toggleUserSelection(name, el) {
@@ -219,22 +220,16 @@
             } else {
                 selectedUsers.add(name);
                 el.classList.add('selected');
-                if (splitMode !== 'equal') {
-                    const inp = el.querySelector('.custom-input');
-                    inp.style.display = 'block';
-                    // Auto-focus the input for convenience
-                    setTimeout(() => inp.focus(), 50);
-                }
+                if (splitMode !== 'equal') el.querySelector('.custom-input').style.display = 'block';
                 el.querySelector('.check-icon').innerText = '✅';
             }
             
-            document.getElementById('dropdownLabel').innerHTML = `Selected People (${selectedUsers.size}) <span>▼</span>`;
+            document.getElementById('dropdownLabel').innerHTML = `Selected (${selectedUsers.size}) <span>▼</span>`;
             validateMath();
         }
 
         function setMode(mode) {
             splitMode = mode;
-            // Update Chips
             document.querySelectorAll('.tool-chip').forEach(c => c.classList.remove('active'));
             if(mode === 'equal') document.getElementById('modeEqual').classList.add('active');
             if(mode === 'amount') document.getElementById('modeAmt').classList.add('active');
@@ -244,16 +239,13 @@
             document.querySelectorAll('.user-option').forEach(row => {
                 const input = row.querySelector('.custom-input');
                 const isSelected = row.classList.contains('selected');
+                const uName = row.getAttribute('data-name');
                 
                 if (mode === 'equal') {
                     input.style.display = 'none';
-                    input.placeholder = '';
-                } else if (mode === 'amount') {
+                } else {
                     input.style.display = isSelected ? 'block' : 'none';
-                    input.placeholder = '₹';
-                } else if (mode === 'percent') {
-                    input.style.display = isSelected ? 'block' : 'none';
-                    input.placeholder = '%';
+                    input.placeholder = mode === 'amount' ? '$' : '%';
                 }
             });
             validateMath();
@@ -266,7 +258,6 @@
 
             if (selectedUsers.size === 0 || total === 0) {
                 bar.style.display = 'none';
-                btn.disabled = false;
                 return true; 
             }
 
@@ -275,36 +266,45 @@
             if (splitMode === 'equal') {
                 const share = (total / selectedUsers.size).toFixed(2);
                 bar.className = 'validation-bar val-success';
-                bar.innerText = `Equal Split: ₹${share} per person`;
+                bar.innerText = `Equal Split: $${share} per person`;
                 btn.disabled = false;
                 return true;
             }
 
             // SUMMING LOGIC
             let currentSum = 0;
+            let inputsValid = true;
+
             selectedUsers.forEach(u => {
-                const val = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
-                currentSum += val;
+                const val = parseFloat(document.getElementById(`inp-${u}`).value);
+                if(isNaN(val)) inputsValid = false;
+                else currentSum += val;
             });
+
+            if(!inputsValid) {
+                bar.className = 'validation-bar val-error';
+                bar.innerText = "❌ Please enter valid numbers";
+                btn.disabled = true;
+                return false;
+            }
 
             if (splitMode === 'amount') {
                 const diff = total - currentSum;
-                if (Math.abs(diff) < 0.5) { // Allowing small float error
+                if (Math.abs(diff) < 0.1) {
                     bar.className = 'validation-bar val-success';
-                    bar.innerText = "✅ Perfect Match (₹" + currentSum + ")";
+                    bar.innerText = "✅ Perfect Match ($" + currentSum + ")";
                     btn.disabled = false;
                     return true;
                 } else {
                     bar.className = 'validation-bar val-error';
-                    bar.innerText = `❌ Sum is ₹${currentSum}. Remaining: ₹${diff.toFixed(2)}`;
+                    bar.innerText = `❌ Sum is $${currentSum}. Need $${total}`;
                     btn.disabled = true;
                     return false;
                 }
             }
 
             if (splitMode === 'percent') {
-                const diff = 100 - currentSum;
-                if (Math.abs(diff) < 0.1) {
+                if (Math.abs(100 - currentSum) < 0.1) {
                     bar.className = 'validation-bar val-success';
                     bar.innerText = "✅ Total is 100%";
                     btn.disabled = false;
@@ -329,7 +329,6 @@
                 alert("Please fill all fields."); return;
             }
 
-            // FINAL MATH CHECK (Double safety)
             if (splitMode !== 'equal' && !validateMath()) {
                 alert("The math doesn't add up! Check the red box."); return;
             }
@@ -338,8 +337,7 @@
             const equalShare = total / selectedUsers.size;
 
             selectedUsers.forEach(u => {
-                // If I paid, I don't owe myself. But we need to account for my share in the logic.
-                if (u === payer) return; 
+                if (u === payer) return; // Don't owe self
 
                 let debt = 0;
                 const inputVal = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
@@ -348,7 +346,7 @@
                 else if (splitMode === 'amount') debt = inputVal;
                 else if (splitMode === 'percent') debt = (total * (inputVal / 100));
 
-                if (debt > 0) {
+                if (debt > 0.01) {
                     expenses.push({
                         id: Date.now() + Math.random(),
                         desc: desc,
@@ -365,9 +363,10 @@
             document.getElementById('desc').value = '';
             document.getElementById('totalAmount').value = '';
             selectedUsers.clear();
-            document.getElementById('dropdownLabel').innerHTML = `Select People (0) <span>▼</span>`;
-            document.getElementById('mathBar').style.display = 'none';
+            document.getElementById('dropdownContent').classList.remove('open');
             renderAll();
+            document.getElementById('dropdownLabel').innerHTML = `Select People... <span>▼</span>`;
+            document.getElementById('mathBar').style.display = 'none';
             saveToCloud();
         }
 
@@ -381,9 +380,16 @@
         }
 
         function deleteExpense(id) {
-            if(confirm("Delete this entry?")) {
-                expenses = expenses.filter(e => e.id !== id);
-                saveToCloud();
+            const passcode = prompt("🔐 SECURITY CHECK\nEnter Passcode to delete:");
+            
+            // --- SECURITY CHECK ---
+            if (passcode === "EMP49₹") {
+                if(confirm("Passcode accepted. Delete this entry?")) {
+                    expenses = expenses.filter(e => e.id !== id);
+                    saveToCloud();
+                }
+            } else {
+                alert("⛔ ACCESS DENIED\nWrong passcode.");
             }
         }
 
@@ -396,20 +402,19 @@
             
             const ops = users.map(u => `<option value="${u}">${u}</option>`).join('');
             document.getElementById('currentUserSelect').innerHTML = `<option value="">-- Select Me --</option>` + ops;
-            document.getElementById('payerSelect').innerHTML = `<option>Who Paid?</option>` + ops;
+            document.getElementById('payerSelect').innerHTML = `<option>Loading...</option>` + ops;
 
             if(currentUser) document.getElementById('currentUserSelect').value = currentUser;
             if(currentPayer) document.getElementById('payerSelect').value = currentPayer;
 
             // The Multi-Select List
             const list = document.getElementById('dropdownContent');
-            // Only rebuild if user count changed to preserve inputs
             if (list.children.length !== users.length) {
                 list.innerHTML = users.map(u => `
-                    <div class="user-option" onclick="toggleUserSelection('${u}', this)">
-                        <span class="check-icon" style="margin-right:10px; font-size:1.2rem;">⬜</span>
+                    <div class="user-option" onclick="toggleUserSelection('${u}', this)" data-name="${u}">
+                        <span class="check-icon">⬜</span>
                         <span class="user-name">${u}</span>
-                        <input type="number" class="custom-input" id="inp-${u}" placeholder="₹" onclick="event.stopPropagation()" oninput="validateMath()">
+                        <input type="number" class="custom-input" id="inp-${u}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
                     </div>
                 `).join('');
             }
@@ -423,7 +428,7 @@
             const box = document.getElementById('dashboardList');
             box.innerHTML = '';
 
-            if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name at the top</div>'; return; }
+            if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name at top</div>'; return; }
 
             let balances = {};
             users.forEach(u => balances[u] = 0);
@@ -438,24 +443,21 @@
                 const val = balances[u];
                 const colorClass = val > 0 ? 'money-plus' : 'money-minus';
                 const text = val > 0 ? `${u} owes you` : `You owe ${u}`;
-                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">₹${Math.abs(val).toFixed(2)}</span></div>`;
+                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">$${Math.abs(val).toFixed(2)}</span></div>`;
             }
-            box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">Settled Up! 🎉</div>';
+            box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">All Settled Up</div>';
         }
 
         function renderHistory() {
-            const list = document.getElementById('expenseList');
-            if (expenses.length === 0) { list.innerHTML = '<div style="padding:15px; text-align:center; color:#ccc;">No transactions yet.</div>'; return; }
-            
-            list.innerHTML = expenses.map(e => `
-                <div style="padding:12px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            document.getElementById('expenseList').innerHTML = expenses.map(e => `
+                <div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="font-weight:600; color:#374151;">${e.desc}</div>
-                        <div style="font-size:0.85rem; color:#6b7280;">${e.payer} paid for ${e.beneficiary}</div>
+                        <div style="font-weight:600; color:#1f2937;">${e.desc}</div>
+                        <div style="font-size:0.8rem; color:#6b7280;">${e.payer} paid for ${e.beneficiary}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700; color:#1f2937;">₹${e.amount.toFixed(2)}</div>
-                        <button class="btn-delete" onclick="deleteExpense(${e.id})" style="margin-top:4px;">Del</button>
+                        <div style="font-weight:700;">$${e.amount.toFixed(2)}</div>
+                        <button class="btn-delete" onclick="deleteExpense(${e.id})">Delete</button>
                     </div>
                 </div>
             `).reverse().join('');
