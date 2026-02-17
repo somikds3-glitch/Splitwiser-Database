@@ -87,7 +87,7 @@
     <div class="container">
         <div class="card" style="background: #1f2937; color: white; padding: 15px;">
             <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase;">Viewing As</label>
-            <select id="currentUserSelect" onchange="renderDashboard()" style="background: #374151; color: white; border:none; margin-bottom:0; margin-top:5px;">
+            <select id="currentUserSelect" onchange="refreshView()" style="background: #374151; color: white; border:none; margin-bottom:0; margin-top:5px;">
                 <option>Loading...</option>
             </select>
         </div>
@@ -142,10 +142,10 @@
 
     <script>
         // ***************************************************************
-        // 1. YOUR GOOGLE SCRIPT LINK (Already Inserted)
+        // 1. YOUR GOOGLE SCRIPT LINK
         const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec";
 
-        // 2. PASTE YOUR GITHUB LINK HERE (For the notification to work)
+        // 2. PASTE YOUR GITHUB LINK HERE
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -279,9 +279,7 @@
                 }
             });
 
-            // --- PROFESSIONAL RECEIPT GENERATOR ---
-            const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-            
+            // --- RECEIPT NOTIFICATION ---
             const notificationText = 
                 `*🧾 EXPENSE RECEIPT* \n` +
                 `---------------------------------\n` +
@@ -327,6 +325,13 @@
 
         function closeModal() { document.getElementById('notifyModal').style.display = 'none'; }
 
+        // --- NEW: REFRESH VIEW FUNCTION ---
+        // This is called when the user dropdown changes
+        function refreshView() {
+            renderDashboard();
+            renderHistory();
+        }
+
         function renderAll() {
             const currentUser = document.getElementById('currentUserSelect').value;
             const currentPayer = document.getElementById('payerSelect').value;
@@ -344,8 +349,7 @@
                         <input type="number" class="custom-input" id="inp-${u}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
                     </div>`).join('');
             }
-            renderDashboard();
-            renderHistory();
+            refreshView();
         }
 
         function renderDashboard() {
@@ -379,7 +383,7 @@
                 return;
             }
 
-            // FILTER: Show only expenses where 'me' is either the payer or the beneficiary
+            // FILTER: Only show expenses I'm involved in
             const myExpenses = expenses.filter(e => e.payer === me || e.beneficiary === me);
 
             if (myExpenses.length === 0) {
