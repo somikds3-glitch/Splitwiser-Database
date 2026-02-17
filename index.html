@@ -3,420 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Splitwiser Pro</title>
+    <title>Splitwiser Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- MODERN VARIABLES --- */
+        /* --- VARIABLES & THEME --- */
         :root {
-            --primary: #4F46E5; /* Indigo */
-            --primary-dark: #4338ca;
-            --bg: #F3F4F6;
-            --card-bg: #FFFFFF;
-            --text-main: #111827;
-            --text-light: #6B7280;
-            --success: #10B981;
-            --danger: #EF4444;
-            --border: #E5E7EB;
-            --radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --primary: #8b5cf6; /* PURPLE */
+            --primary-light: #f3e8ff;
+            --bg: #F9FAFB;
+            --card: #FFFFFF;
+            --text: #1f2937;
+            --border: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        /* --- RESET & BASE --- */
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            padding-bottom: 80px; /* Space for scrolling */
-        }
 
-        /* --- APP HEADER --- */
-        .app-header {
-            background: var(--card-bg);
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .app-logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.5px; }
-        .status-badge { font-size: 0.75rem; font-weight: 500; padding: 4px 8px; border-radius: 20px; background: #EEF2FF; color: var(--primary); }
+        /* --- LAYOUT --- */
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
+        .card-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
 
-        /* --- CONTAINER --- */
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-
-        /* --- CARDS --- */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        .card-title {
-            margin: 0 0 20px 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* --- FORM ELEMENTS --- */
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-light); margin-bottom: 6px; }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: #F9FAFB;
-            transition: all 0.2s;
-            appearance: none; /* Removes default UI on iOS */
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
+        /* --- INPUTS --- */
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; background: #fff; }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
         /* --- BUTTONS --- */
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2); }
-        .btn-primary:active { transform: scale(0.98); background: var(--primary-dark); }
-        .btn-sm { padding: 8px 16px; font-size: 0.9rem; width: auto; }
-        .btn-delete { background: #FEF2F2; color: var(--danger); font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
+        .btn { width: 100%; padding: 14px; background: var(--text); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+        .btn-primary { background: var(--primary); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-delete { background: #fee2e2; color: #991b1b; padding: 6px 12px; font-size: 0.8rem; width: auto; border-radius: 8px; }
 
-        /* --- SEGMENTED CONTROL (TABS) --- */
-        .segmented-control {
-            display: flex;
-            background: #F3F4F6;
-            padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+        /* --- CUSTOM MULTI-SELECT DROPDOWN --- */
+        .dropdown-trigger {
+            padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500;
         }
-        .segment-opt {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-light);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .dropdown-content {
+            display: none; border: 1px solid var(--border); border-radius: 10px; margin-top: 5px; background: white; max-height: 300px; overflow-y: auto;
         }
-        .segment-opt.active {
-            background: white;
-            color: var(--text-main);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            font-weight: 600;
+        .dropdown-content.open { display: block; animation: slideDown 0.2s ease-out; }
+        
+        .user-option {
+            padding: 12px; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; cursor: pointer; transition: all 0.2s;
+        }
+        .user-option:last-child { border-bottom: none; }
+        
+        /* THE PURPLE GLOW */
+        .user-option.selected {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+        }
+        .user-option.selected .user-name {
+            color: var(--primary);
+            font-weight: 700;
         }
 
-        /* --- USER LIST --- */
-        .user-list {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-        .user-row {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.1s;
-        }
-        .user-row:last-child { border-bottom: none; }
-        .user-row:hover { background: #F9FAFB; }
-        .checkbox-custom {
-            width: 20px; height: 20px;
-            margin-right: 12px;
-            accent-color: var(--primary);
-        }
-        .user-name { flex-grow: 1; font-weight: 500; }
-        .custom-amt-input {
-            width: 90px;
-            padding: 8px;
-            font-size: 0.9rem;
-            text-align: right;
-            margin: 0;
-            display: none;
-        }
+        /* --- CUSTOM SPLIT UI --- */
+        .split-tools { display: flex; gap: 10px; margin-bottom: 10px; }
+        .tool-chip { padding: 6px 12px; background: #eee; border-radius: 20px; font-size: 0.8rem; cursor: pointer; font-weight: 500; }
+        .tool-chip.active { background: var(--text); color: white; }
 
-        /* --- DASHBOARD ITEMS --- */
-        .dash-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .dash-item:last-child { border-bottom: none; }
-        .dash-text { font-size: 0.95rem; font-weight: 500; }
-        .dash-amt { font-family: 'Inter', monospace; font-weight: 700; letter-spacing: -0.5px; }
-        .text-green { color: var(--success); }
-        .text-red { color: var(--danger); }
+        .custom-input { width: 80px; margin: 0; padding: 6px; font-size: 0.9rem; text-align: right; margin-left: auto; display: none; }
 
-        /* --- HISTORY ITEMS --- */
-        .history-item {
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
+        /* --- VALIDATION BAR --- */
+        .validation-bar {
+            background: #eee; padding: 10px; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; margin-top: 10px; display: none;
         }
-        .history-main { display: flex; flex-direction: column; gap: 4px; }
-        .hist-desc { font-weight: 600; color: var(--text-main); }
-        .hist-meta { font-size: 0.85rem; color: var(--text-light); }
+        .val-success { background: #d1fae5; color: #065f46; }
+        .val-error { background: #fee2e2; color: #991b1b; }
+
+        /* --- DASHBOARD --- */
+        .dash-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+        .money-plus { color: var(--success); font-weight: 700; }
+        .money-minus { color: var(--danger); font-weight: 700; }
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="app-header">
-        <div class="app-logo">Splitwiser Pro</div>
-        <div id="statusBadge" class="status-badge">Connecting...</div>
+    <div style="text-align: center; margin-bottom: 10px;">
+        <span id="statusBadge" style="background:#e5e7eb; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Connecting...</span>
     </div>
 
     <div class="container">
-
-        <div class="card" style="padding: 16px; background: #2d3436; color: white;">
-            <label style="color: rgba(255,255,255,0.7); margin-bottom: 8px;">YOU ARE VIEWING AS:</label>
-            <select id="currentUserSelect" onchange="renderDashboard()" style="background: rgba(255,255,255,0.1); border: none; color: white;">
-                <option value="">Loading users...</option>
+        
+        <div class="card" style="background: #1f2937; color: white;">
+            <label style="font-size: 0.75rem; opacity: 0.7; text-transform: uppercase;">Viewing As</label>
+            <select id="currentUserSelect" onchange="renderDashboard()" style="background: #374151; color: white; border:none; margin-bottom:0; margin-top:5px;">
+                <option>Loading...</option>
             </select>
         </div>
 
         <div class="card">
-            <h3 class="card-title">💸 Add Expense</h3>
+            <div class="card-header">💸 New Expense</div>
             
-            <div class="form-group">
-                <input type="text" id="desc" placeholder="What was it? (e.g. Dinner)">
-            </div>
+            <input type="text" id="desc" placeholder="Description (e.g. Dinner)">
             
-            <div class="form-group">
-                <input type="number" id="totalAmount" placeholder="Total Amount (e.g. 1500)" oninput="recalculateSplits()">
-            </div>
-
-            <div class="form-group">
-                <label>Who paid?</label>
-                <select id="payerSelect" onchange="recalculateSplits()"><option>Loading...</option></select>
-            </div>
-
-            <div class="form-group">
-                <label>Split Method</label>
-                <div class="segmented-control">
-                    <div class="segment-opt active" id="tabEqual" onclick="setSplitType('equal')">Equally</div>
-                    <div class="segment-opt" id="tabCustom" onclick="setSplitType('custom')">Custom</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Who is involved?</label>
-                <div id="userCheckboxList" class="user-list">
-                    </div>
-            </div>
-
-            <div id="mathSummary" style="text-align: right; font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 15px; height: 20px;"></div>
-
-            <button onclick="addExpense()" class="btn btn-primary" id="addExpBtn">Add Expense</button>
-        </div>
-
-        <div class="card">
-            <h3 class="card-title">📊 Dashboard</h3>
-            <div id="statusList">
-                <div style="text-align: center; color: var(--text-light); padding: 20px;">
-                    Select your name at the top to see balances.
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3 class="card-title">👥 Add New Person</h3>
             <div style="display: flex; gap: 10px;">
-                <input type="text" id="newUserName" placeholder="Enter Name">
-                <button onclick="addUser()" class="btn btn-primary btn-sm">Add</button>
+                <div style="flex:1">
+                    <label style="font-size:0.8rem; color:#666;">Total Bill</label>
+                    <input type="number" id="totalAmount" placeholder="0.00" oninput="validateMath()">
+                </div>
+                <div style="flex:1">
+                    <label style="font-size:0.8rem; color:#666;">Who Paid?</label>
+                    <select id="payerSelect"><option>Loading...</option></select>
+                </div>
+            </div>
+
+            <label style="font-size:0.8rem; color:#666; display:block; margin-bottom:5px;">Who is involved?</label>
+            <div class="dropdown-trigger" onclick="toggleDropdown()" id="dropdownLabel">
+                Select People (0) <span>▼</span>
+            </div>
+            <div id="dropdownContent" class="dropdown-content">
+                </div>
+
+            <div style="margin-top: 15px;">
+                <label style="font-size:0.8rem; color:#666;">Split Method:</label>
+                <div class="split-tools">
+                    <div class="tool-chip active" id="modeEqual" onclick="setMode('equal')">Equal Split</div>
+                    <div class="tool-chip" id="modeAmt" onclick="setMode('amount')">Exact Amounts ($)</div>
+                    <div class="tool-chip" id="modePct" onclick="setMode('percent')">Percentages (%)</div>
+                </div>
+            </div>
+
+            <div id="mathBar" class="validation-bar"></div>
+
+            <button onclick="addExpense()" id="saveBtn" class="btn btn-primary" style="margin-top: 15px;">Add Expense</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">📊 Dashboard</div>
+            <div id="dashboardList"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">👥 Add Person</div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="newUserName" placeholder="Name" style="margin-bottom:0;">
+                <button onclick="addUser()" class="btn" style="width: auto;">Add</button>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title">📜 History</h3>
-            <div id="expenseList">
-                <div style="text-align: center; color: var(--text-light);">No transactions yet.</div>
-            </div>
+            <div class="card-header">📜 History</div>
+            <div id="expenseList"></div>
         </div>
-
     </div>
 
     <script>
-        // ***************************************************************
-        // ✅ LINK INSERTED BELOW
-        const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec"; 
-        // ***************************************************************
+        // ✅ YOUR LINK IS BELOW
+        const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec";
         
         let users = [];
         let expenses = [];
-        let currentSplitType = 'equal'; // 'equal' or 'custom'
-        let isSaving = false;
+        let splitMode = 'equal'; // equal, amount, percent
+        let selectedUsers = new Set();
 
         // --- CORE SYNC ---
         async function loadFromCloud() {
-            updateStatus("Syncing...", "busy");
+            setStatus("Syncing...");
             try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
+                const res = await fetch(API_URL);
+                const data = await res.json();
                 users = data.users || [];
                 expenses = data.expenses || [];
                 renderAll();
-                updateStatus("Connected", "success");
-            } catch (error) {
-                console.error(error);
-                updateStatus("Offline", "error");
-            }
+                setStatus("Connected");
+            } catch (e) { console.error(e); setStatus("Offline"); }
         }
 
         async function saveToCloud() {
-            if (isSaving) return;
-            isSaving = true;
-            updateStatus("Saving...", "busy");
+            setStatus("Saving...");
+            document.getElementById('saveBtn').disabled = true;
+            document.getElementById('saveBtn').innerText = "Saving...";
             
-            const btn = document.getElementById('addExpBtn');
-            btn.innerText = "Saving...";
-            btn.disabled = true;
-
             const payload = JSON.stringify({ users, expenses });
+            await fetch(API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: payload });
             
-            try {
-                await fetch(API_URL, { 
-                    method: "POST", 
-                    mode: "no-cors", 
-                    headers: { "Content-Type": "text/plain" }, 
-                    body: payload 
-                });
-                
-                setTimeout(() => {
-                    loadFromCloud();
-                    isSaving = false;
-                    btn.innerText = "Add Expense";
-                    btn.disabled = false;
-                }, 1500);
-            } catch (e) {
-                updateStatus("Save Failed", "error");
-                isSaving = false;
-                btn.innerText = "Add Expense";
-                btn.disabled = false;
-            }
+            setTimeout(() => { 
+                loadFromCloud(); 
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('saveBtn').innerText = "Add Expense";
+            }, 1500);
         }
 
-        function updateStatus(msg, type) {
-            const el = document.getElementById('statusBadge');
-            el.innerText = msg;
-            if (type === 'success') { el.style.background = '#D1FAE5'; el.style.color = '#065F46'; }
-            else if (type === 'error') { el.style.background = '#FEE2E2'; el.style.color = '#991B1B'; }
-            else { el.style.background = '#EEF2FF'; el.style.color = '#4F46E5'; }
-        }
+        function setStatus(msg) { document.getElementById('statusBadge').innerText = msg; }
 
         // --- UI LOGIC ---
-
-        function setSplitType(type) {
-            currentSplitType = type;
-            document.getElementById('tabEqual').className = type === 'equal' ? 'segment-opt active' : 'segment-opt';
-            document.getElementById('tabCustom').className = type === 'custom' ? 'segment-opt active' : 'segment-opt';
-            
-            const inputs = document.querySelectorAll('.custom-amt-input');
-            inputs.forEach(input => input.style.display = type === 'custom' ? 'block' : 'none');
-            
-            recalculateSplits();
+        function toggleDropdown() {
+            document.getElementById('dropdownContent').classList.toggle('open');
         }
 
-        function recalculateSplits() {
-            if (currentSplitType === 'custom') {
-                document.getElementById('mathSummary').innerText = "";
-                return; 
-            }
-
-            const total = parseFloat(document.getElementById('totalAmount').value) || 0;
-            const checkboxes = document.querySelectorAll('.user-cb:checked');
-            const count = checkboxes.length;
-            
-            if (count > 0 && total > 0) {
-                const share = (total / count).toFixed(2);
-                document.getElementById('mathSummary').innerText = `₹${share} per person`;
+        function toggleUserSelection(name, el) {
+            // Toggle selection logic
+            if (selectedUsers.has(name)) {
+                selectedUsers.delete(name);
+                el.classList.remove('selected');
+                el.querySelector('.custom-input').style.display = 'none';
+                el.querySelector('.check-icon').innerText = '⬜';
             } else {
-                document.getElementById('mathSummary').innerText = '';
+                selectedUsers.add(name);
+                el.classList.add('selected');
+                // Show input only if custom mode
+                if (splitMode !== 'equal') el.querySelector('.custom-input').style.display = 'block';
+                el.querySelector('.check-icon').innerText = '✅';
+            }
+            
+            document.getElementById('dropdownLabel').innerHTML = `Selected People (${selectedUsers.size}) <span>▼</span>`;
+            validateMath();
+        }
+
+        function setMode(mode) {
+            splitMode = mode;
+            // Update Chips
+            document.querySelectorAll('.tool-chip').forEach(c => c.classList.remove('active'));
+            if(mode === 'equal') document.getElementById('modeEqual').classList.add('active');
+            if(mode === 'amount') document.getElementById('modeAmt').classList.add('active');
+            if(mode === 'percent') document.getElementById('modePct').classList.add('active');
+
+            // Show/Hide Inputs
+            document.querySelectorAll('.user-option').forEach(row => {
+                const input = row.querySelector('.custom-input');
+                const isSelected = row.classList.contains('selected');
+                
+                if (mode === 'equal') {
+                    input.style.display = 'none';
+                    input.placeholder = '';
+                } else if (mode === 'amount') {
+                    input.style.display = isSelected ? 'block' : 'none';
+                    input.placeholder = '$';
+                } else if (mode === 'percent') {
+                    input.style.display = isSelected ? 'block' : 'none';
+                    input.placeholder = '%';
+                }
+            });
+            validateMath();
+        }
+
+        function validateMath() {
+            const bar = document.getElementById('mathBar');
+            const total = parseFloat(document.getElementById('totalAmount').value) || 0;
+            const btn = document.getElementById('saveBtn');
+
+            if (selectedUsers.size === 0 || total === 0) {
+                bar.style.display = 'none';
+                return true; // Weak validation, real check on save
+            }
+
+            bar.style.display = 'block';
+            
+            if (splitMode === 'equal') {
+                const share = (total / selectedUsers.size).toFixed(2);
+                bar.className = 'validation-bar val-success';
+                bar.innerText = `Equal Split: $${share} per person`;
+                btn.disabled = false;
+                return true;
+            }
+
+            // SUMMING LOGIC
+            let currentSum = 0;
+            selectedUsers.forEach(u => {
+                const val = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
+                currentSum += val;
+            });
+
+            if (splitMode === 'amount') {
+                const diff = total - currentSum;
+                if (Math.abs(diff) < 0.1) {
+                    bar.className = 'validation-bar val-success';
+                    bar.innerText = "✅ Perfect Match ($" + currentSum + ")";
+                    btn.disabled = false;
+                    return true;
+                } else {
+                    bar.className = 'validation-bar val-error';
+                    bar.innerText = `❌ Sum is $${currentSum}. Remaining: $${diff.toFixed(2)}`;
+                    btn.disabled = true;
+                    return false;
+                }
+            }
+
+            if (splitMode === 'percent') {
+                if (Math.abs(100 - currentSum) < 0.1) {
+                    bar.className = 'validation-bar val-success';
+                    bar.innerText = "✅ Total is 100%";
+                    btn.disabled = false;
+                    return true;
+                } else {
+                    bar.className = 'validation-bar val-error';
+                    bar.innerText = `❌ Total is ${currentSum}%. Need 100%`;
+                    btn.disabled = true;
+                    return false;
+                }
             }
         }
+
+        // --- ACTIONS ---
 
         function addExpense() {
             const desc = document.getElementById('desc').value;
             const total = parseFloat(document.getElementById('totalAmount').value);
             const payer = document.getElementById('payerSelect').value;
-            const checkboxes = document.querySelectorAll('.user-cb:checked');
 
-            if (!desc || !total || payer === "Loading..." || checkboxes.length === 0) {
-                alert("Please fill in all fields and select people.");
-                return;
+            if (!desc || !total || payer === "Loading..." || selectedUsers.size === 0) {
+                alert("Please fill all fields."); return;
             }
 
-            // GHOST WRITER LOGIC
-            let count = checkboxes.length;
-            let equalShare = total / count;
+            // FINAL MATH CHECK (Double safety)
+            if (splitMode !== 'equal' && !validateMath()) {
+                alert("The numbers don't add up! Check the red box."); return;
+            }
+
             let entriesAdded = 0;
+            const equalShare = total / selectedUsers.size;
 
-            checkboxes.forEach(cb => {
-                const beneficiary = cb.value;
-                if (beneficiary === payer) return; // Skip self
+            selectedUsers.forEach(u => {
+                if (u === payer) return; // Don't owe self
 
-                let amountOwed = 0;
-                if (currentSplitType === 'equal') {
-                    amountOwed = equalShare;
-                } else {
-                    const inputId = `amt-${beneficiary}`;
-                    amountOwed = parseFloat(document.getElementById(inputId).value) || 0;
-                }
+                let debt = 0;
+                const inputVal = parseFloat(document.getElementById(`inp-${u}`).value) || 0;
 
-                if (amountOwed > 0) {
+                if (splitMode === 'equal') debt = equalShare;
+                else if (splitMode === 'amount') debt = inputVal;
+                else if (splitMode === 'percent') debt = (total * (inputVal / 100));
+
+                if (debt > 0) {
                     expenses.push({
-                        id: Date.now() + Math.random(), 
-                        desc: `${desc} (Split)`,
-                        amount: amountOwed,
+                        id: Date.now() + Math.random(),
+                        desc: desc,
+                        amount: debt,
                         payer: payer,
-                        beneficiary: beneficiary,
+                        beneficiary: u,
                         date: new Date().toLocaleDateString()
                     });
                     entriesAdded++;
                 }
             });
 
-            // Reset UI
+            // Reset
             document.getElementById('desc').value = '';
             document.getElementById('totalAmount').value = '';
-            document.querySelectorAll('.user-cb').forEach(cb => cb.checked = false);
-            document.getElementById('mathSummary').innerText = '';
-            
+            selectedUsers.clear();
+            renderAll();
+            document.getElementById('dropdownLabel').innerHTML = `Select People (0) <span>▼</span>`;
             saveToCloud();
         }
 
@@ -430,7 +361,7 @@
         }
 
         function deleteExpense(id) {
-            if(confirm("Delete this transaction?")) {
+            if(confirm("Delete this?")) {
                 expenses = expenses.filter(e => e.id !== id);
                 saveToCloud();
             }
@@ -439,98 +370,65 @@
         // --- RENDERERS ---
 
         function renderAll() {
-            updateUserLists();
+            // Dropdowns
+            const currentUser = document.getElementById('currentUserSelect').value;
+            const currentPayer = document.getElementById('payerSelect').value;
+            
+            const ops = users.map(u => `<option value="${u}">${u}</option>`).join('');
+            document.getElementById('currentUserSelect').innerHTML = `<option value="">-- Select Me --</option>` + ops;
+            document.getElementById('payerSelect').innerHTML = `<option>Who Paid?</option>` + ops;
+
+            if(currentUser) document.getElementById('currentUserSelect').value = currentUser;
+            if(currentPayer) document.getElementById('payerSelect').value = currentPayer;
+
+            // The Multi-Select List
+            const list = document.getElementById('dropdownContent');
+            // Only rebuild if user count changed to preserve inputs
+            if (list.children.length !== users.length) {
+                list.innerHTML = users.map(u => `
+                    <div class="user-option" onclick="toggleUserSelection('${u}', this)">
+                        <span class="check-icon" style="margin-right:10px;">⬜</span>
+                        <span class="user-name">${u}</span>
+                        <input type="number" class="custom-input" id="inp-${u}" placeholder="0" onclick="event.stopPropagation()" oninput="validateMath()">
+                    </div>
+                `).join('');
+            }
+            
             renderDashboard();
             renderHistory();
         }
 
-        function updateUserLists() {
-            const currentUser = document.getElementById('currentUserSelect').value;
-            const currentPayer = document.getElementById('payerSelect').value;
-            
-            const options = users.map(u => `<option value="${u}">${u}</option>`).join('');
-            
-            // Dropdowns
-            const userSelect = document.getElementById('currentUserSelect');
-            userSelect.innerHTML = `<option value="">-- Select Your Name --</option>` + options;
-            if(currentUser) userSelect.value = currentUser;
-
-            const payerSelect = document.getElementById('payerSelect');
-            payerSelect.innerHTML = `<option value="">-- Select Payer --</option>` + options;
-            if(currentPayer) payerSelect.value = currentPayer;
-
-            // Checkbox List (Only rebuild if needed)
-            const listContainer = document.getElementById('userCheckboxList');
-            if (listContainer.children.length !== users.length) {
-                listContainer.innerHTML = users.map(u => `
-                    <div class="user-row">
-                        <input type="checkbox" class="user-cb checkbox-custom" value="${u}" onchange="recalculateSplits()">
-                        <span class="user-name">${u}</span>
-                        <input type="number" class="custom-amt-input" id="amt-${u}" placeholder="0">
-                    </div>
-                `).join('');
-            }
-        }
-
         function renderDashboard() {
             const me = document.getElementById('currentUserSelect').value;
-            const list = document.getElementById('statusList');
-            
-            if (!me) {
-                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">Select your name at the top to see your dashboard.</div>';
-                return;
-            }
+            const box = document.getElementById('dashboardList');
+            box.innerHTML = '';
+
+            if(!me) { box.innerHTML = '<div style="padding:15px; text-align:center; color:#999;">Select Name</div>'; return; }
 
             let balances = {};
             users.forEach(u => balances[u] = 0);
-
             expenses.forEach(e => {
-                if (e.payer === me) balances[e.beneficiary] += e.amount;
-                else if (e.beneficiary === me) balances[e.payer] -= e.amount;
+                if(e.payer === me) balances[e.beneficiary] += e.amount;
+                else if(e.beneficiary === me) balances[e.payer] -= e.amount;
             });
 
             let html = '';
-            let hasDebt = false;
-            
-            for (let person in balances) {
-                if (person === me) continue;
-                const amt = balances[person];
-                if (Math.abs(amt) < 0.5) continue; // Skip tiny amounts
-
-                hasDebt = true;
-                if (amt > 0) {
-                    html += `
-                    <div class="dash-item">
-                        <span class="dash-text">${person} owes you</span> 
-                        <span class="dash-amt text-green">₹${amt.toFixed(2)}</span>
-                    </div>`;
-                } else {
-                    html += `
-                    <div class="dash-item">
-                        <span class="dash-text">You owe ${person}</span> 
-                        <span class="dash-amt text-red">₹${Math.abs(amt).toFixed(2)}</span>
-                    </div>`;
-                }
+            for(let u in balances) {
+                if(u === me || Math.abs(balances[u]) < 0.5) continue;
+                const val = balances[u];
+                const colorClass = val > 0 ? 'money-plus' : 'money-minus';
+                const text = val > 0 ? `${u} owes you` : `You owe ${u}`;
+                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">$${Math.abs(val).toFixed(2)}</span></div>`;
             }
-            
-            if (!hasDebt) html = '<div style="text-align:center; color:#10B981; padding:15px; font-weight:500;">You are all settled up! 🎉</div>';
-            list.innerHTML = html;
+            box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">Settled Up</div>';
         }
 
         function renderHistory() {
-            const list = document.getElementById('expenseList');
-            if (expenses.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">No expenses yet.</div>';
-                return;
-            }
-            list.innerHTML = expenses.map(e => `
-                <div class="history-item">
-                    <div class="history-main">
-                        <div class="hist-desc">${e.desc}</div>
-                        <div class="hist-meta">${e.payer} paid for ${e.beneficiary}</div>
-                        <div class="hist-meta" style="font-weight:600; color:var(--text-main);">₹${e.amount.toFixed(2)}</div>
-                    </div>
-                    <button class="btn btn-delete" onclick="deleteExpense(${e.id})">Delete</button>
+            document.getElementById('expenseList').innerHTML = expenses.map(e => `
+                <div style="padding:10px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+                    <div><b>${e.desc}</b><br><small>${e.payer} paid for ${e.beneficiary}</small></div>
+                    <div style="text-align:right;"><b>$${e.amount.toFixed(2)}</b><br>
+                    <button class="btn-delete" onclick="deleteExpense(${e.id})">Del</button></div>
                 </div>
             `).reverse().join('');
         }
