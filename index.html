@@ -105,7 +105,7 @@
             
             <div style="display: flex; gap: 10px;">
                 <div style="flex:1">
-                    <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:4px; display:block;">TOTAL BILL</label>
+                    <label style="font-size:0.75rem; color:#666; font-weight:600; margin-bottom:4px; display:block;">TOTAL BILL (₹)</label>
                     <input type="number" id="totalAmount" placeholder="0.00" oninput="validateMath()">
                 </div>
                 <div style="flex:1">
@@ -239,13 +239,13 @@
             document.querySelectorAll('.user-option').forEach(row => {
                 const input = row.querySelector('.custom-input');
                 const isSelected = row.classList.contains('selected');
-                const uName = row.getAttribute('data-name');
                 
                 if (mode === 'equal') {
                     input.style.display = 'none';
                 } else {
                     input.style.display = isSelected ? 'block' : 'none';
-                    input.placeholder = mode === 'amount' ? '$' : '%';
+                    // FIXED: Changed $ to ₹
+                    input.placeholder = mode === 'amount' ? '₹' : '%';
                 }
             });
             validateMath();
@@ -266,7 +266,8 @@
             if (splitMode === 'equal') {
                 const share = (total / selectedUsers.size).toFixed(2);
                 bar.className = 'validation-bar val-success';
-                bar.innerText = `Equal Split: $${share} per person`;
+                // FIXED: Changed $ to ₹
+                bar.innerText = `Equal Split: ₹${share} per person`;
                 btn.disabled = false;
                 return true;
             }
@@ -292,12 +293,14 @@
                 const diff = total - currentSum;
                 if (Math.abs(diff) < 0.1) {
                     bar.className = 'validation-bar val-success';
-                    bar.innerText = "✅ Perfect Match ($" + currentSum + ")";
+                    // FIXED: Changed $ to ₹
+                    bar.innerText = "✅ Perfect Match (₹" + currentSum + ")";
                     btn.disabled = false;
                     return true;
                 } else {
                     bar.className = 'validation-bar val-error';
-                    bar.innerText = `❌ Sum is $${currentSum}. Need $${total}`;
+                    // FIXED: Changed $ to ₹
+                    bar.innerText = `❌ Sum is ₹${currentSum}. Need ₹${total}`;
                     btn.disabled = true;
                     return false;
                 }
@@ -382,7 +385,7 @@
         function deleteExpense(id) {
             const passcode = prompt("🔐 SECURITY CHECK\nEnter Passcode to delete:");
             
-            // --- SECURITY CHECK ---
+            // --- SECURITY CHECK (Correct symbol) ---
             if (passcode === "EMP49₹") {
                 if(confirm("Passcode accepted. Delete this entry?")) {
                     expenses = expenses.filter(e => e.id !== id);
@@ -443,7 +446,8 @@
                 const val = balances[u];
                 const colorClass = val > 0 ? 'money-plus' : 'money-minus';
                 const text = val > 0 ? `${u} owes you` : `You owe ${u}`;
-                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">$${Math.abs(val).toFixed(2)}</span></div>`;
+                // FIXED: Changed $ to ₹
+                html += `<div class="dash-row"><span>${text}</span><span class="${colorClass}">₹${Math.abs(val).toFixed(2)}</span></div>`;
             }
             box.innerHTML = html || '<div style="padding:15px; text-align:center; color:#aaa;">All Settled Up</div>';
         }
@@ -456,7 +460,7 @@
                         <div style="font-size:0.8rem; color:#6b7280;">${e.payer} paid for ${e.beneficiary}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:700;">$${e.amount.toFixed(2)}</div>
+                        <div style="font-weight:700;">₹${e.amount.toFixed(2)}</div>
                         <button class="btn-delete" onclick="deleteExpense(${e.id})">Delete</button>
                     </div>
                 </div>
