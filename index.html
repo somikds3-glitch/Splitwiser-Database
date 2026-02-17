@@ -144,10 +144,10 @@
 
     <script>
         // ***************************************************************
-        // 1. GOOGLE SCRIPT LINK
-        const API_URL = "https://script.google.com/macros/s/AKfycbzvRULeMdsE8tJP-LcEZuTtCprwODIGAEkZKG_F0eXF-yhokMQ-41WHdGBReCJ4-MCi/exec";
+        // 1. YOUR NEW GOOGLE SCRIPT LINK (Already Inserted)
+        const API_URL = "https://script.google.com/macros/s/AKfycbxfOInApEWXtkGmtCy4G6e7G-1xEFA7JqEqevTgIGe6XfstKYY4buAEDdfxAstzEGw/exec";
 
-        // 2. YOUR APP LINK (Already Inserted)
+        // 2. YOUR GITHUB APP LINK (Please Verify This!)
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -186,7 +186,7 @@
         function setStatus(msg) { document.getElementById('statusBadge').innerText = msg; }
         function toggleDropdown() { document.getElementById('dropdownContent').classList.toggle('open'); }
 
-        // --- SAFE USER HELPERS (Handles old Strings & new Objects) ---
+        // --- SAFE USER HELPERS ---
         function getUserName(u) { return (typeof u === 'object' && u !== null) ? u.name : u; }
         function getUserEmail(u) { return (typeof u === 'object' && u !== null) ? u.email : null; }
 
@@ -328,11 +328,9 @@
             }
 
             // 2. Check for Legacy User (Upgrade)
-            // Finds if this name exists as a simple string
             const legacyIndex = users.findIndex(u => typeof u === 'string' && u.toLowerCase() === name.toLowerCase());
 
             if (legacyIndex !== -1) {
-                // UPGRADE MODE
                 if(confirm(`User '${name}' exists without an email. Do you want to update them with ${email}?`)) {
                     users[legacyIndex] = { name: name, email: email };
                     alert("✅ User Upgraded Successfully!");
@@ -376,7 +374,11 @@
         }
 
         function closeModal() { document.getElementById('notifyModal').style.display = 'none'; }
-        function refreshView() { renderDashboard(); renderHistory(); }
+        
+        function refreshView() {
+            renderDashboard();
+            renderHistory();
+        }
 
         function renderAll() {
             const currentUser = document.getElementById('currentUserSelect').value;
