@@ -144,10 +144,10 @@
 
     <script>
         // ***************************************************************
-        // 1. YOUR NEW GOOGLE SCRIPT LINK
+        // 1. YOUR NEW GOOGLE SCRIPT LINK (Already Inserted)
         const API_URL = "https://script.google.com/macros/s/AKfycbxfOInApEWXtkGmtCy4G6e7G-1xEFA7JqEqevTgIGe6XfstKYY4buAEDdfxAstzEGw/exec";
 
-        // 2. YOUR GITHUB APP LINK
+        // 2. YOUR GITHUB APP LINK (Please Verify This!)
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -269,12 +269,10 @@
             const total = parseFloat(document.getElementById('totalAmount').value);
             const payer = document.getElementById('payerSelect').value;
 
-            // Notice we allow negative 'total' now, it passes this check fine.
             if (!desc || !total || payer === "Loading..." || selectedUsers.size === 0) { alert("Please fill all fields."); return; }
             if (splitMode !== 'equal' && !validateMath()) { alert("Math error!"); return; }
 
             const equalShare = total / selectedUsers.size;
-            
             selectedUsers.forEach(u => {
                 if (u === payer) return;
                 let debt = 0;
@@ -285,25 +283,14 @@
                 else if (splitMode === 'amount') debt = inputVal;
                 else if (splitMode === 'percent') debt = (total * (inputVal / 100));
 
-                // --- NEW NEGATIVE LOGIC (CREDIT FLIP) ---
+                // Directly record the debt as calculated, negative values will naturally subtract.
                 if (Math.abs(debt) > 0.01) {
-                    let finalPayer = payer;
-                    let finalBeneficiary = u;
-                    let finalAmount = debt;
-
-                    if (debt < 0) {
-                        // Flip the Payer and Beneficiary, and make the amount positive!
-                        finalPayer = u;
-                        finalBeneficiary = payer;
-                        finalAmount = Math.abs(debt);
-                    }
-
                     expenses.push({ 
                         id: Date.now() + Math.random(), 
                         desc: desc, 
-                        amount: finalAmount, 
-                        payer: finalPayer, 
-                        beneficiary: finalBeneficiary, 
+                        amount: debt, 
+                        payer: payer, 
+                        beneficiary: u, 
                         date: new Date().toLocaleDateString() 
                     });
                 }
