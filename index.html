@@ -94,11 +94,11 @@
         </div>
 
         <div class="card">
-            <div class="card-header">💸 New Expense</div>
-            <input type="text" id="desc" placeholder="Description (e.g. Group Dinner)">
+            <div class="card-header">💸 New Expense / Credit</div>
+            <input type="text" id="desc" placeholder="Description (e.g. Group Dinner or Refund)">
             <div style="display: flex; gap: 10px;">
                 <div style="flex:1">
-                    <label style="font-size:0.75rem; font-weight:600; color:#666;">TOTAL BILL (₹)</label>
+                    <label style="font-size:0.75rem; font-weight:600; color:#666;">TOTAL (₹)</label>
                     <input type="number" id="totalAmount" placeholder="0.00" oninput="validateMath()">
                 </div>
                 <div style="flex:1">
@@ -144,10 +144,10 @@
 
     <script>
         // ***************************************************************
-        // 1. YOUR NEW GOOGLE SCRIPT LINK (Already Inserted)
+        // 1. YOUR NEW GOOGLE SCRIPT LINK
         const API_URL = "https://script.google.com/macros/s/AKfycbxfOInApEWXtkGmtCy4G6e7G-1xEFA7JqEqevTgIGe6XfstKYY4buAEDdfxAstzEGw/exec";
 
-        // 2. YOUR GITHUB APP LINK (Please Verify This!)
+        // 2. YOUR GITHUB APP LINK
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -269,10 +269,12 @@
             const total = parseFloat(document.getElementById('totalAmount').value);
             const payer = document.getElementById('payerSelect').value;
 
+            // Notice we allow negative 'total' now, it passes this check fine.
             if (!desc || !total || payer === "Loading..." || selectedUsers.size === 0) { alert("Please fill all fields."); return; }
             if (splitMode !== 'equal' && !validateMath()) { alert("Math error!"); return; }
 
             const equalShare = total / selectedUsers.size;
+            
             selectedUsers.forEach(u => {
                 if (u === payer) return;
                 let debt = 0;
@@ -283,8 +285,27 @@
                 else if (splitMode === 'amount') debt = inputVal;
                 else if (splitMode === 'percent') debt = (total * (inputVal / 100));
 
-                if (debt > 0.01) {
-                    expenses.push({ id: Date.now() + Math.random(), desc: desc, amount: debt, payer: payer, beneficiary: u, date: new Date().toLocaleDateString() });
+                // --- NEW NEGATIVE LOGIC (CREDIT FLIP) ---
+                if (Math.abs(debt) > 0.01) {
+                    let finalPayer = payer;
+                    let finalBeneficiary = u;
+                    let finalAmount = debt;
+
+                    if (debt < 0) {
+                        // Flip the Payer and Beneficiary, and make the amount positive!
+                        finalPayer = u;
+                        finalBeneficiary = payer;
+                        finalAmount = Math.abs(debt);
+                    }
+
+                    expenses.push({ 
+                        id: Date.now() + Math.random(), 
+                        desc: desc, 
+                        amount: finalAmount, 
+                        payer: finalPayer, 
+                        beneficiary: finalBeneficiary, 
+                        date: new Date().toLocaleDateString() 
+                    });
                 }
             });
 
