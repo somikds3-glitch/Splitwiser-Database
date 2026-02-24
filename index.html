@@ -144,10 +144,10 @@
 
     <script>
         // ***************************************************************
-        // 1. YOUR NEW GOOGLE SCRIPT LINK (Already Inserted)
+        // 1. YOUR NEW GOOGLE SCRIPT LINK
         const API_URL = "https://script.google.com/macros/s/AKfycbxfOInApEWXtkGmtCy4G6e7G-1xEFA7JqEqevTgIGe6XfstKYY4buAEDdfxAstzEGw/exec";
 
-        // 2. YOUR GITHUB APP LINK (Please Verify This!)
+        // 2. YOUR GITHUB APP LINK
         const APP_LINK = "https://somikds3-glitch.github.io/Splitwiser-Database/"; 
         // ***************************************************************
 
@@ -186,7 +186,6 @@
         function setStatus(msg) { document.getElementById('statusBadge').innerText = msg; }
         function toggleDropdown() { document.getElementById('dropdownContent').classList.toggle('open'); }
 
-        // --- SAFE USER HELPERS ---
         function getUserName(u) { return (typeof u === 'object' && u !== null) ? u.name : u; }
         function getUserEmail(u) { return (typeof u === 'object' && u !== null) ? u.email : null; }
 
@@ -283,7 +282,6 @@
                 else if (splitMode === 'amount') debt = inputVal;
                 else if (splitMode === 'percent') debt = (total * (inputVal / 100));
 
-                // Directly record the debt as calculated, negative values will naturally subtract.
                 if (Math.abs(debt) > 0.01) {
                     expenses.push({ 
                         id: Date.now() + Math.random(), 
@@ -296,13 +294,17 @@
                 }
             });
 
-            // --- RECEIPT NOTIFICATION ---
+            // --- SMART RECEIPT (Handles Negative Numbers) ---
+            const displayTotal = total < 0 ? Math.abs(total) : total;
+            const statusType = total < 0 ? "🟢 Credit / Refund" : "🔴 Unverified";
+            
             const notificationText = 
                 `*🧾 EXPENSE RECEIPT* \n` +
                 `---------------------------------\n` +
+                `*Status:* ${statusType}\n\n` +
                 `*Item:* ${desc}\n` +
-                `*Amount:* ₹${total.toLocaleString('en-IN')}\n` +
-                `*Paid by:* ${payer}\n` +
+                `*Amount:* ₹${displayTotal.toLocaleString('en-IN')}\n` +
+                `*Logged by:* ${payer}\n` +
                 `---------------------------------\n` +
                 `⚠️ *Action:* You have been tagged in this transaction. Verify your split immediately.\n\n` +
                 `🔗 *View Details:* \n${APP_LINK}`;
@@ -310,7 +312,6 @@
             document.getElementById('notifyText').value = notificationText;
             document.getElementById('notifyModal').style.display = 'flex';
 
-            // Reset
             document.getElementById('desc').value = '';
             document.getElementById('totalAmount').value = '';
             selectedUsers.clear();
@@ -321,23 +322,19 @@
             saveToCloud();
         }
 
-        // --- SMART ADD / UPGRADE USER ---
         function addOrUpgradeUser() {
             const name = document.getElementById('newUserName').value.trim();
             const email = document.getElementById('newUserEmail').value.trim().toLowerCase();
 
             if (!name || !email) { alert("⚠️ Please enter both Name and Email ID."); return; }
 
-            // 1. Check for Duplicate Email (Block)
             const existingEmail = users.find(u => getUserEmail(u) === email);
             if (existingEmail) {
                 alert(`⛔ Error: The email '${email}' is already taken by ${getUserName(existingEmail)}.`);
                 return;
             }
 
-            // 2. Check for Legacy User (Upgrade)
             const legacyIndex = users.findIndex(u => typeof u === 'string' && u.toLowerCase() === name.toLowerCase());
-
             if (legacyIndex !== -1) {
                 if(confirm(`User '${name}' exists without an email. Do you want to update them with ${email}?`)) {
                     users[legacyIndex] = { name: name, email: email };
@@ -348,14 +345,12 @@
                 return;
             }
 
-            // 3. Check for Duplicate Name Object (Block)
             const existingNameObj = users.find(u => typeof u === 'object' && u.name.toLowerCase() === name.toLowerCase());
             if (existingNameObj) {
                 alert(`⛔ Error: User '${name}' already exists (Email: ${existingNameObj.email}).`);
                 return;
             }
 
-            // 4. Create New User
             users.push({ name: name, email: email });
             alert("✅ New User Added!");
             clearUserInputs();
@@ -458,11 +453,22 @@
                 return;
             }
 
-            list.innerHTML = myExpenses.map(e => `
+            list.innerHTML = myExpenses.map(e => {
+                // --- SMART HISTORY LOGIC (Handles Negative Text) ---
+                let actionText = `${e.payer} paid for ${e.beneficiary}`;
+                let displayAmount = e.amount;
+                
+                if (e.amount < 0) {
+                    actionText = `${e.payer} credited / refunded ${e.beneficiary}`;
+                    displayAmount = Math.abs(e.amount);
+                }
+
+                return `
                 <div style="padding:15px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <div><div style="font-weight:600; color:#1f2937;">${e.desc}</div><div style="font-size:0.8rem; color:#6b7280;">${e.payer} paid for ${e.beneficiary}</div></div>
-                    <div style="text-align:right;"><div style="font-weight:700;">₹${e.amount.toFixed(2)}</div><button class="btn-delete" onclick="deleteExpense(${e.id})">Delete</button></div>
-                </div>`).reverse().join('');
+                    <div><div style="font-weight:600; color:#1f2937;">${e.desc}</div><div style="font-size:0.8rem; color:#6b7280;">${actionText}</div></div>
+                    <div style="text-align:right;"><div style="font-weight:700;">₹${displayAmount.toFixed(2)}</div><button class="btn-delete" onclick="deleteExpense(${e.id})">Delete</button></div>
+                </div>`;
+            }).reverse().join('');
         }
 
         loadFromCloud();
