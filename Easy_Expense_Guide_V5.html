@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Roommate Expense Story</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            /* Deep Slate */
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+
+            --manthan-color: #3b82f6;
+            /* Blue */
+            --manthan-bg: rgba(59, 130, 246, 0.15);
+            --somik-color: #10b981;
+            /* Green */
+            --somik-bg: rgba(16, 185, 129, 0.15);
+            --highlight: #f59e0b;
+            /* Amber */
+            --highlight-red: #ef4444;
+            /* Red for warnings */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* --- THE MAGIC WIZARD STEPPER --- */
+        .step-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--manthan-color), var(--somik-color));
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .step-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--highlight);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .highlight-text {
+            color: #fff;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        /* --- CHAT BUBBLES (THE STORY) --- */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-somik {
+            align-self: flex-start;
+            background: var(--somik-bg);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-bottom-left-radius: 4px;
+            color: #d1fae5;
+        }
+
+        .chat-manthan {
+            align-self: flex-end;
+            background: var(--manthan-bg);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-bottom-right-radius: 4px;
+            color: #dbeafe;
+        }
+
+        .chat-name {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        /* --- IMPORTANT RULE BOX (V4 STRICTNESS) --- */
+        .important-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--highlight-red);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+            border-top: 1px solid rgba(239, 68, 68, 0.2);
+            border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+            border-right: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .important-box h3 {
+            color: #fca5a5;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .important-box p {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .important-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- INTERACTIVE MATH BLOCKS --- */
+        .math-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .equation-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .term {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .term-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+        }
+
+        .term-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .operator {
+            font-size: 2rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- VISUALIZING THE PIE/BARS --- */
+        .visual-bar-container {
+            width: 100%;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 22px;
+            overflow: hidden;
+            display: flex;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .v-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: white;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .v-bar-left {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .v-bar-right {
+            background: linear-gradient(90deg, #059669, #10b981);
+        }
+
+        /* --- V4 ITEMIZED TABLE --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: #60a5fa;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .row-manthan td {
+            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .row-somik td {
+            border-left: 3px solid #10b981;
+        }
+
+        /* --- BUTTONS --- */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--manthan-color), var(--somik-color));
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button.primary:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- FINAL NUMBER BUBBLE --- */
+        .final-number-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .pulse-text {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 1;
+                color: #fcd34d;
+                text-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+            }
+
+            100% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>The Roommate Expense Story</h1>
+            <p class="subtitle">A clear, step-by-step breakdown of Manthan & Somik's shared costs.</p>
+        </header>
+
+        <!-- STEP 1: The Upfront Joint Effort -->
+        <div class="step-container" id="step1">
+            <div class="card">
+                <h2><span class="step-badge">1</span> Making The Initial Investments</h2>
+
+                <div class="chat-container">
+                    <div class="chat-bubble chat-manthan">
+                        <div class="chat-name">Manthan</div>
+                        "When we first moved in, I paid a huge lump sum for the Shoerack and some of my personal
+                        furniture too to get us started!"
+                    </div>
+                    <div class="chat-bubble chat-somik">
+                        <div class="chat-name">Somik</div>
+                        "Exactly! We both had to drop serious cash upfront to get all the Furlenco items. The fairest
+                        way forward is to put all those upfront common expenses into ONE big pool and balance the
+                        scales."
+                    </div>
+                </div>
+
+                <p>Because these upfront investments were unequal in size, we need to balance them. Let's look at the
+                    combined joint pool of Furlenco costs.</p>
+
+                <div class="math-box">
+                    <div class="equation-row">
+                        <div class="term">
+                            <div class="term-value">₹20,410</div>
+                            <div class="term-label">Funded by Somik</div>
+                        </div>
+                        <div class="operator">-</div>
+                        <div class="term">
+                            <div class="term-value">₹3,148</div>
+                            <div class="term-label">Funded by Manthan</div>
+                        </div>
+                    </div>
+
+                    <div class="visual-bar-container">
+                        <div class="v-bar v-bar-left" id="bar-left" style="width: 14%;">Manthan's Input</div>
+                        <div class="v-bar v-bar-right" id="bar-right" style="width: 86%;">Somik's Input</div>
+                    </div>
+
+                    <p style="margin: 0; font-size: 0.95rem; color: #a5b4fc;">
+                        Notice: We explicitly subtracted the ₹12,570 cost of Somik's Personal Cupboard from his pile, so
+                        Manthan mathematically does not pay a single rupee for it!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Flattening the Difference -->
+        <div class="step-container" id="step2">
+            <div class="card">
+                <h2><span class="step-badge">2</span> Finding the Middle Ground</h2>
+
+                <p>To make sure both roommates contribute equally to the shared Furlenco items, we take the difference
+                    in our initial investments and simply slice it down the middle.</p>
+
+                <div class="math-box">
+                    <div class="equation-row">
+                        <div class="term">
+                            <div class="term-value">₹17,262</div>
+                            <div class="term-label">The Total Difference</div>
+                        </div>
+                        <div class="operator">÷ 2</div>
+                        <div class="operator">=</div>
+                        <div class="term">
+                            <div class="term-value" style="color: var(--highlight);">₹8,631.21</div>
+                            <div class="term-label">Manthan's Equalization Balance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-bubble chat-manthan">
+                        <div class="chat-name">Manthan</div>
+                        "So I owe ₹8,631 to make things perfectly equal. Do I have to pay this hit all at once?!"
+                    </div>
+                    <div class="chat-bubble chat-somik">
+                        <div class="chat-name">Somik</div>
+                        "Not at all. Instead of making you pay a massive lump sum, we are going to use a smoothing trick
+                        so your cash flow stays easy and totally predictable."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: The 12-Month Smoothing Plan (CRUCIAL EXPLANATION) -->
+        <div class="step-container" id="step3">
+            <div class="card">
+                <h2><span class="step-badge">3</span> The 12-Month "Smoothing" Magic</h2>
+                <p>We take that equalization balance of ₹8,631 and spread it gently over <b>12 months</b>. Think of it
+                    like a 0% interest installment plan. It protects Manthan's wallet from big sudden hits.</p>
+
+                <div class="math-box" style="margin-bottom: 0;">
+                    <div class="equation-row">
+                        <div class="term">
+                            <div class="term-value">₹8,631.21</div>
+                            <div class="term-label">Equalization Balance</div>
+                        </div>
+                        <div class="operator">÷</div>
+                        <div class="term">
+                            <div class="term-value" style="color: #60a5fa;">12</div>
+                            <div class="term-label">Months</div>
+                        </div>
+                        <div class="operator">=</div>
+                        <div class="term">
+                            <div class="term-value" style="color: var(--highlight);">₹719.27</div>
+                            <div class="term-label">Furlenco Installment</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="important-box">
+                    <h3>⚠️ The Compounding Rule: What happens after 6 Months?</h3>
+                    <p>Some of the items we are currently paying off are on 6-month leases (like Manthan's Shoerack and
+                        Somik's Sofa).</p>
+                    <p><strong>Because we actively chose to smooth your payments over a full 12 months, you are
+                            committing to paying off this <i>past</i> balance for the entirety of the year, even after 6
+                            months pass.</strong></p>
+                    <p>When month 7 arrives, and we renew the short-term leases for another cycle, the new lump-sum
+                        renewal costs will be added to the pot.</p>
+                    <p style="font-weight: 700; font-size: 1.15rem; color: #fca5a5; margin-top: 1rem;">
+                        This means in Month 7, Manthan will still be paying the ₹719.27 from today's past debt,
+                        <u>PLUS</u> the new smoothed installments from the upcoming renewals!
+                    </p>
+                    <p style="font-style: italic; color: #cbd5e1; margin-top: 0.5rem;">The monthly installments
+                        continually compound to keep your wallet safe from massive one-time hits.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: The Table Breakdown -->
+        <div class="step-container" id="step4">
+            <div class="card">
+                <h2><span class="step-badge">4</span> The Itemized Breakdown File</h2>
+
+                <div class="chat-container">
+                    <div class="chat-bubble chat-somik">
+                        <div class="chat-name">Somik</div>
+                        "For total transparency, here is exactly what feeds into the math we just did. Every item, the
+                        term length, and who paid the upfront lump-sum."
+                    </div>
+                </div>
+
+                <div
+                    style="overflow-x: auto; margin-top: 0.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: rgba(15, 23, 42, 0.4);">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Furnishing Item</th>
+                                <th>Category</th>
+                                <th>Upfront Cost</th>
+                                <th>Term Length</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Manthan upfronts -->
+                            <tr class="row-manthan">
+                                <td>Shoerack <span
+                                        style="font-size: 0.75rem; background: rgba(59,130,246,0.3); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Manthan
+                                        Paid Upfront</span></td>
+                                <td>Common</td>
+                                <td>₹3,148.07</td>
+                                <td>6 Months</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-bottom: 1px dotted rgba(255,255,255,0.1); padding: 0;">
+                                </td>
+                            </tr>
+                            <!-- Somik upfronts -->
+                            <tr class="row-somik">
+                                <td>Dining Table <span
+                                        style="font-size: 0.75rem; background: rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Somik
+                                        Paid Upfront</span></td>
+                                <td>Common</td>
+                                <td>₹8,782.80</td>
+                                <td>12 Months</td>
+                            </tr>
+                            <tr class="row-somik">
+                                <td>Chest of drawers <span
+                                        style="font-size: 0.75rem; background: rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Somik
+                                        Paid Upfront</span></td>
+                                <td>Common</td>
+                                <td>₹6,054.36</td>
+                                <td>12 Months</td>
+                            </tr>
+                            <tr class="row-somik">
+                                <td>Sofa <span
+                                        style="font-size: 0.75rem; background: rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Somik
+                                        Paid Upfront</span></td>
+                                <td>Common</td>
+                                <td>₹4,463.22</td>
+                                <td>6 Months</td>
+                            </tr>
+                            <tr class="row-somik">
+                                <td>Coffee Table <span
+                                        style="font-size: 0.75rem; background: rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Somik
+                                        Paid Upfront</span></td>
+                                <td>Common</td>
+                                <td>₹1,110.12</td>
+                                <td>6 Months</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="border-bottom: 2px solid rgba(255,255,255,0.2); padding: 0;">
+                                </td>
+                            </tr>
+                            <!-- Monthly -->
+                            <tr>
+                                <td colspan="2"><span style="color: #60a5fa; font-weight: 700;">Rentomojo Regular
+                                        Bills</span><br><span style="font-size: 0.85rem; color: var(--text-muted);">(TV,
+                                        Fridge, Washing Machine, Water)</span></td>
+                                <td>₹0 Upfront</td>
+                                <td><span style="color: #34d399; font-weight: 700;">₹1,662.50 / mo (Manthan's
+                                        Half)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: THE GRAND FINALE -->
+        <div class="step-container" id="step5">
+            <div class="final-number-box">
+                <h2 style="justify-content: center; margin-bottom: 2rem;">The Final Combined Monthly Payment</h2>
+
+                <p
+                    style="color: rgba(255,255,255,0.8); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;">
+                    Manthan pays his Furlenco Installment <strong>PLUS</strong> his exact half of the Monthly Rentomojo
+                    bill!
+                </p>
+
+                <div class="equation-row" style="margin-bottom: 2rem;">
+                    <div class="term">
+                        <div class="term-value" style="color: var(--highlight);">₹719.27</div>
+                        <div class="term-label">Furlenco Installment</div>
+                    </div>
+                    <div class="operator" style="color: white;">+</div>
+                    <div class="term">
+                        <div class="term-value" style="color: #34d399;">₹1,662.50</div>
+                        <div class="term-label">Rentomojo Half</div>
+                    </div>
+                    <div class="operator" style="color: white;">=</div>
+                </div>
+
+                <div class="pulse-text"
+                    style="font-size: 6rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; color: white; margin-bottom: 1rem; text-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <span id="final-amt">0.00</span>
+                </div>
+                <div
+                    style="font-size: 1.2rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
+                    Manthan Sends This Every Month To Balance The Scales ✅
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="btn-container">
+            <button id="btn-prev" disabled>← Previous Concept</button>
+            <button id="btn-next" class="primary">Next Step →</button>
+        </div>
+    </div>
+
+    <script>
+        const totalSteps = 5;
+        let currentStep = 1;
+
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function showStep(stepIndex) {
+            // Hide all
+            document.querySelectorAll('.step-container').forEach(el => {
+                el.classList.remove('active');
+                gsap.set(el, { opacity: 0, scale: 0.97 });
+            });
+
+            // Show active
+            const activeStep = document.getElementById('step' + stepIndex);
+            activeStep.classList.add('active');
+
+            // Animate in
+            gsap.to(activeStep, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.6,
+                ease: "power2.out"
+            });
+
+            // Button states
+            btnPrev.disabled = (stepIndex === 1);
+
+            if (stepIndex === totalSteps) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'flex';
+                if (stepIndex === 1) btnNext.innerHTML = "Next: Flatten The Difference →";
+                if (stepIndex === 2) btnNext.innerHTML = "Next: The Smoothing Magic →";
+                if (stepIndex === 3) btnNext.innerHTML = "Next: See The Itemized Table →";
+                if (stepIndex === 4) btnNext.innerHTML = "Show Final Number! →";
+            }
+
+            if (stepIndex === 5) {
+                // Number counting animation
+                gsap.fromTo("#final-amt",
+                    { innerHTML: 0 },
+                    {
+                        innerHTML: 2381.77, duration: 2.5, ease: "power3.out",
+                        snap: { innerHTML: 0.01 },
+                        onUpdate: function () {
+                            this.targets()[0].innerHTML = "₹" + Number(this.targets()[0].innerHTML).toFixed(2);
+                        }
+                    }
+                );
+            }
+        }
+
+        btnNext.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initialize
+        showStep(1);
+    </script>
+</body>
+
+</html>
