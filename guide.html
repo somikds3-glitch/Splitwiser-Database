@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splitwiser Visual Manual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #F3F4F6; margin: 0; padding: 20px; color: #1f2937; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-weight: 800; font-size: 1.8rem; margin-bottom: 5px; }
+        
+        .step-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+        .step-number { background: #1f2937; color: white; display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; margin-bottom: 10px; text-transform: uppercase; }
+        .step-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+        .step-text { font-size: 0.95rem; color: #4b5563; line-height: 1.5; margin-bottom: 15px; }
+        
+        /* CSS MOCKUPS (NO IMAGES NEEDED) */
+        .mockup { background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 12px; padding: 15px; margin-top: 10px; pointer-events: none; }
+        .m-header { font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; color: #374151;}
+        .m-input { background: white; border: 1px solid #d1d5db; padding: 8px; border-radius: 6px; font-size: 0.8rem; color: #6b7280; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
+        .m-btn { background: #6366f1; color: white; text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; margin-top: 5px; }
+        .m-dark { background: #1f2937; color: white; padding: 10px; border-radius: 8px; font-size: 0.8rem; text-align: center; }
+        .m-popup { background: white; border: 2px solid #10b981; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .m-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>App Quick Start</h1>
+            <p style="color:#666;">How to use the app in 4 easy steps.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">Step 1</div>
+            <div class="step-title">Add Yourself First</div>
+            <div class="step-text">Scroll to the bottom of the app. You must add your Name and Email so the app can track your math.</div>
+            <div class="mockup">
+                <div class="m-header">👥 Add/Upgrade Person</div>
+                <div style="display:flex; gap:10px;">
+                    <div class="m-input" style="flex:1;">Rahul</div>
+                    <div class="m-input" style="flex:1;">rahul@gmail.com</div>
+                </div>
+                <div class="m-btn" style="background:#e5e7eb; color:#374151;">Add / Upgrade</div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">Step 2</div>
+            <div class="step-title">Select Who You Are</div>
+            <div class="step-text">Go to the very top. Select your name from the dark box. This makes sure the dashboard shows money owed to YOU.</div>
+            <div class="mockup" style="background: #1f2937;">
+                <div style="font-size: 0.7rem; color: #9ca3af; text-transform: uppercase;">Viewing As</div>
+                <div class="m-input" style="background: #374151; color: white; border: none; margin-top: 5px;">Rahul ▼</div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">Step 3</div>
+            <div class="step-title">Log a Group Expense</div>
+            <div class="step-text">Type what you bought, how much it cost, and who is splitting it.</div>
+            <div class="mockup">
+                <div class="m-header">💸 New Expense</div>
+                <div class="m-input">Pizza Dinner</div>
+                <div class="m-row">
+                    <div style="flex:1; margin-right:5px;"><div style="font-size:0.7rem; font-weight:bold;">TOTAL (₹)</div><div class="m-input">1500</div></div>
+                    <div style="flex:1; margin-left:5px;"><div style="font-size:0.7rem; font-weight:bold;">WHO PAID?</div><div class="m-input">Rahul ▼</div></div>
+                </div>
+                <div class="m-input" style="text-align: left; color: #1f2937; font-weight: bold;">Selected (3) ▼</div>
+                <div class="m-btn">Add Expense</div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">Step 4</div>
+            <div class="step-title">Share the Receipt</div>
+            <div class="step-text">When you save an expense, a popup appears. Copy the receipt and paste it into WhatsApp.</div>
+            <div class="mockup" style="background: #e5e7eb;">
+                <div class="m-popup">
+                    <div style="font-size:1.2rem; margin-bottom:10px;">✅ Expense Saved</div>
+                    <div class="m-input" style="height: 60px; text-align:left; font-family:monospace; font-size:0.7rem;">*🧾 EXPENSE RECEIPT*<br>Item: Pizza Dinner<br>Amount: ₹1,500</div>
+                    <div class="m-btn" style="background: #dcfce7; color: #166534;">📋 Copy Receipt</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">Important!</div>
+            <div class="step-title">How to Log a Refund</div>
+            <div class="step-text">When someone pays you back, enter a <b>NEGATIVE NUMBER</b> (like -500). This clears their debt on the dashboard.</div>
+            <div class="mockup">
+                <div class="m-row">
+                    <div style="flex:1;"><div style="font-size:0.7rem; font-weight:bold;">TOTAL (₹)</div><div class="m-input" style="border-color: #ef4444; color: #ef4444; font-weight:bold;">-500</div></div>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="m-btn" style="display:block; background:#1f2937; text-decoration:none; margin-top:20px;">Open Splitwiser Now</a>
+    </div>
+
+</body>
+</html>
