@@ -855,6 +855,8 @@
         function hideSnack() { document.getElementById('snackbar').style.display='none'; lastDeleted=null; }
 
         function openEdit(id) {
+            const passcode = prompt("🔐 Security check\nEnter passcode to edit:");
+            if (passcode !== DELETE_PASSCODE) { alert("⛔ Access denied"); return; }
             const rec = expenses.find(e => e.id === id); if (!rec) return;
             document.getElementById('editId').value = id;
             document.getElementById('editDesc').value = rec.desc;
